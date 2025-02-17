@@ -1,0 +1,21 @@
+[project]
+name = "ttk-text"
+version = "0.1.0"
+description = "Themed Tkinter Text"
+authors = [
+    { name = "Jesse205", email = "jesse205@qq.com" },
+]
+maintainers = [
+    { name = "Jesse205", email = "jesse205@qq.com" },
+]
+dependencies = []
+requires-python = ">=3.13"
+readme = { file = "README.txt", content-type = "text/markdown" }
+license = { text = "MIT" }
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
