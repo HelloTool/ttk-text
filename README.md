@@ -1,6 +1,8 @@
+<!-- Warning! This file will be included in the wheel package.Please do not use relative paths. -->
+
 # TtkText
 
-[简体中文](./README_zh.md) |
+[简体中文](https://github.com/Jesse205/TtkText/blob/main/README_zh.md) |
 **English** |
 <small>More translations are welcome!</small>
 
