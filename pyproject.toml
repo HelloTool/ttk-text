@@ -10,12 +10,20 @@ maintainers = [
 ]
 dependencies = []
 requires-python = ">=3.13"
-readme = { file = "README.txt", content-type = "text/markdown" }
-license = { text = "MIT" }
+readme = "README.md"
+license = { file = "LICENSE" }
+
+[dependency-groups]
+test = [
+    "pytest>=8.3.4",
+]
+
+[tool.pdm]
+distribution = true
+
+[tool.pdm.scripts]
+test = "pytest tests/ -v"
 
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
-
-[tool.pdm]
-distribution = true

@@ -19,21 +19,14 @@ class ScrolledText(ThemedText):
 
 
 def example():
-    from tkinter import Tk, StringVar
-    from tkinter.ttk import OptionMenu, Style
+    from tkinter import Tk
 
     root = Tk()
     root.geometry("300x300")
-    root.title("ThemedText")
-    style = Style(root)
-    root.bind("<<ThemeChanged>>", lambda _: root.configure(background=style.lookup("TFrame", "background") or None))
-
-    theme_menu = OptionMenu(root, StringVar(root), style.theme_use(), *style.theme_names(),
-                            command=lambda theme: style.theme_use(theme))
-    theme_menu.pack(padx="7p", pady="7p")
-    text = ScrolledText(root, width=30, height=10)
-    text.pack(fill="both", expand=True, padx="7p", pady=(0, "7p"))
-    text.insert("1.0", "Hello, ThemedText!")
+    root.title("ScrolledText")
+    text = ScrolledText(root)
+    text.pack(fill="both", expand=True, padx="7p", pady="7p")
+    text.insert("1.0", "Hello, ScrolledText!")
     root.mainloop()
 
 

@@ -1,6 +1,8 @@
 from tkinter import Event, EventType, Grid, Pack, Place, Text
 from tkinter.ttk import Frame, Style
 
+__all__ = ["ThemedText"]
+
 
 class ThemedText(Text):
     def __init__(
@@ -36,6 +38,21 @@ class ThemedText(Text):
             self.bind(sequence, self.__on_change_state, "+")
         self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
         self.__copy_geometry_methods()
+        self._apply_theme()
+
+    def _apply_theme(self):
+        style_obj = Style(self)
+        style = self.frame.cget("style")
+        self.configure(
+            selectbackground=style_obj.lookup(style, "selectbackground", ["focus"]) or None,
+            selectforeground=style_obj.lookup(style, "selectforeground", ["focus"]) or None,
+            insertwidth=style_obj.lookup(style, "insertwidth", ["focus"], 1),
+            font=style_obj.lookup(style, "font", None, "TkDefaultFont"),
+        )
+        self.frame.configure(
+            padding=style_obj.lookup(style, "padding", None, 1),
+            borderwidth=style_obj.lookup(style, "borderwidth", None, 1),
+        )
 
     def __on_change_state(self, event: Event):
         match event.type:
@@ -55,18 +72,7 @@ class ThemedText(Text):
                     self.frame.state(["!pressed"])
 
     def __on_theme_changed(self, _: Event):
-        style_obj = Style(self)
-        style = self.frame.cget("style")
-        self.configure(
-            selectbackground=style_obj.lookup(style, "selectbackground", ["focus"]) or None,
-            selectforeground=style_obj.lookup(style, "selectforeground", ["focus"]) or None,
-            insertwidth=style_obj.lookup(style, "insertwidth", ["focus"], 1),
-            font=style_obj.lookup(style, "font", None, "TkDefaultFont"),
-        )
-        self.frame.configure(
-            padding=style_obj.lookup(style, "padding", None, 1),
-            borderwidth=style_obj.lookup(style, "borderwidth", None, 1),
-        )
+        self._apply_theme()
 
     def __copy_geometry_methods(self):
         """
@@ -82,24 +88,13 @@ class ThemedText(Text):
 
 
 def example():
-    from tkinter import Tk, StringVar
-    from tkinter.ttk import OptionMenu, Entry
+    from tkinter import Tk
 
     root = Tk()
     root.geometry("300x300")
     root.title("ThemedText")
-    style = Style(root)
-    root.bind("<<ThemeChanged>>", lambda _: root.configure(background=style.lookup("TFrame", "background") or None))
-
-    theme_menu = OptionMenu(root, StringVar(root), style.theme_use(), *style.theme_names(),
-                            command=lambda theme: style.theme_use(theme))
-    theme_menu.pack(padx="7p", pady="7p")
-
-    entry = Entry(root, width=30)
-    entry.insert(1, "Hello, Entry!")
-    entry.pack(fill="x", padx="7p", pady=(0, "7p"))
-    text = ThemedText(root, width=30, height=10)
-    text.pack(fill="both", expand=True, padx="7p", pady=(0, "7p"))
+    text = ThemedText(root)
+    text.pack(fill="both", expand=True, padx="7p", pady="7p")
     text.insert("1.0", "Hello, ThemedText!")
     root.mainloop()
 
