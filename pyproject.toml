@@ -13,6 +13,11 @@ requires-python = ">=3.13"
 readme = "README.md"
 license = { file = "LICENSE" }
 
+[project.urls]
+Repository = "https://github.com/Jesse205/TtkText"
+Bug = "https://github.com/Jesse205/TtkText/issues"
+Changelog = "https://github.com/Jesse205/TtkText/releases"
+
 [dependency-groups]
 test = [
     "pytest>=8.3.4",
