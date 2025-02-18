@@ -1,10 +1,12 @@
+<!-- Warning! This file will be included in the wheel package. Please do not use relative paths. -->
+
 # TtkText
 
-[简体中文](./README_zh.md) |
+[简体中文](https://github.com/Jesse205/TtkText/blob/main/README_zh.md) |
 **English** |
 <small>More translations are welcome!</small>
 
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](./CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](https://github.com/Jesse205/TtkText/blob/main/CODE_OF_CONDUCT.md)
 
 Themed Tkinter Text widget with modern styling support.
 
@@ -14,12 +16,6 @@ Themed Tkinter Text widget with modern styling support.
 - 📜 Built-in ScrolledText component with vertical/horizontal scrollbars
 - 🖥️ Native integration with ttk styles and themes
 - 🔄 Dynamic theme switching support
-
-## Installation
-
-```bash
-pip install ttk-text
-```
 
 ## Quick Start
 
@@ -41,9 +37,9 @@ root.mainloop()
 ## Screenshots
 
 <div>
-<img src="./doc/images/screenshots/windows11.webp" alt="Windows 11" width="302">
-<img src="./doc/images/screenshots/windows10.webp" alt="Windows 10" width="301">
-<img src="./doc/images/screenshots/windows7.webp" alt="Windows 7" width="314">
+<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows11.webp" alt="Windows 11" width="302">
+<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows10.webp" alt="Windows 10" width="301">
+<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows7.webp" alt="Windows 7" width="314">
 </div>
 
 Example screenshots of Windows 11, Windows 10, and Windows 7.
