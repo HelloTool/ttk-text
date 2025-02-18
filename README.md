@@ -21,7 +21,6 @@ Themed Tkinter Text widget with modern styling support.
 pip install ttk-text
 ```
 
-
 ## Quick Start
 
 ```python
@@ -41,9 +40,11 @@ root.mainloop()
 
 ## Screenshots
 
+<div>
 <img src="./doc/images/screenshots/windows11.webp" alt="Windows 11" width="302">
 <img src="./doc/images/screenshots/windows10.webp" alt="Windows 10" width="302">
 <img src="./doc/images/screenshots/windows7.webp" alt="Windows 7" width="314">
+</div>
 
 Example screenshots of Windows 11, Windows 10, and Windows 7.
 
