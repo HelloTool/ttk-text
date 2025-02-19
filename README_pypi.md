@@ -37,9 +37,9 @@ root.mainloop()
 ## Screenshots
 
 <div>
-<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows11.webp" alt="Windows 11" width="302">
-<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows10.webp" alt="Windows 10" width="301">
-<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows7.webp" alt="Windows 7" width="314">
+<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows11.webp" alt="Windows 11" width="338.7">
+<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows10.webp" alt="Windows 10" width="337">
+<img src="https://github.com/Jesse205/TtkText/raw/refs/heads/main/doc/images/screenshots/windows7.webp" alt="Windows 7" width="350.7">
 </div>
 
 Example screenshots of Windows 11, Windows 10, and Windows 7.

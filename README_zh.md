@@ -42,9 +42,9 @@ root.mainloop()
 ## 屏幕截图
 
 <div>
-<img src="./doc/images/screenshots/windows11.webp" alt="Windows 11" width="302">
-<img src="./doc/images/screenshots/windows10.webp" alt="Windows 10" width="301">
-<img src="./doc/images/screenshots/windows7.webp" alt="Windows 7" width="314">
+<img src="./doc/images/screenshots/windows11.webp" alt="Windows 11" width="338.7">
+<img src="./doc/images/screenshots/windows10.webp" alt="Windows 10" width="337">
+<img src="./doc/images/screenshots/windows7.webp" alt="Windows 7" width="350.7">
 </div>
 
 Windows 11、Windows 10 和 Windows 7 的示例截图。
