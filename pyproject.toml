@@ -14,7 +14,20 @@ readme = "README_pypi.md"
 license = { file = "LICENSE" }
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 8.1",
+    "Operating System :: Microsoft :: Windows :: Windows 8",
+    "Operating System :: Microsoft :: Windows :: Windows 7",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [project.urls]
