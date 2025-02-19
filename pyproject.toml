@@ -1,6 +1,6 @@
 [project]
 name = "ttk-text"
-version = "0.1.0"
+version = "0.1.1"
 description = "Themed Tkinter Text widget with modern styling support."
 authors = [
     { name = "Jesse205", email = "jesse205@qq.com" },
@@ -9,13 +9,13 @@ maintainers = [
     { name = "Jesse205", email = "jesse205@qq.com" },
 ]
 dependencies = []
-requires-python = ">=3.13"
+requires-python = ">=3.8"
 readme = "README_pypi.md"
 license = { file = "LICENSE" }
 
 [project.urls]
 Repository = "https://github.com/Jesse205/TtkText"
-Bug = "https://github.com/Jesse205/TtkText/issues"
+Tracker = "https://github.com/Jesse205/TtkText/issues"
 Changelog = "https://github.com/Jesse205/TtkText/releases"
 
 [dependency-groups]

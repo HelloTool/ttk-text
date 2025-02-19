@@ -78,21 +78,22 @@ class ThemedText(Text):
         )
 
     def __on_change_state(self, event: Event):
-        match event.type:
-            case EventType.FocusIn:
-                self.frame.state(["focus"])
-            case EventType.FocusOut:
-                self.frame.state(["!focus"])
-            case EventType.Enter:
-                self.frame.state(["hover"])
-            case EventType.Leave:
-                self.frame.state(["!hover"])
-            case EventType.ButtonPress:
-                if event.num == 1:
-                    self.frame.state(["pressed"])
-            case EventType.ButtonRelease:
-                if event.num == 1:
-                    self.frame.state(["!pressed"])
+        # Older versions of Python do not support the `match` statement.
+        if event.type == EventType.FocusIn:
+            self.frame.state(["focus"])
+        elif event.type == EventType.FocusOut:
+            self.frame.state(["!focus"])
+        elif event.type == EventType.Enter:
+            self.frame.state(["hover"])
+        elif event.type == EventType.Leave:
+            self.frame.state(["!hover"])
+        elif event.type == EventType.ButtonPress:
+            if event.num == 1:
+                self.frame.state(["pressed"])
+        elif event.type == EventType.ButtonRelease:
+            if event.num == 1:
+                self.frame.state(["!pressed"])
+
 
     def __on_theme_changed(self, _: Event):
         self._apply_theme()
