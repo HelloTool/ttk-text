@@ -1,4 +1,5 @@
 from tkinter.ttk import Scrollbar
+from typing import Optional
 
 from ttk_text import ThemedText
 
@@ -26,16 +27,26 @@ class ScrolledText(ThemedText):
 
     def __init__(self, master=None, *, vertical=True, horizontal=False, **kw):
         super().__init__(master, **kw)
+        self._vbar: Optional[Scrollbar] = None
+        self._hbar: Optional[Scrollbar] = None
         if vertical:
-            self.vbar = Scrollbar(self.frame)
-            self.vbar.pack(before=self._real_name, side="right", fill="y")
-            self.vbar.configure(command=self.yview)
-            self.configure(yscrollcommand=self.vbar.set)
+            self._create_vertical_scrollbar()
         if horizontal:
-            self.hbar = Scrollbar(self.frame, orient="horizontal")
-            self.hbar.pack(before=self._real_name, side="bottom", fill="x")
-            self.hbar.configure(command=self.xview)
-            self.configure(xscrollcommand=self.hbar.set)
+            self._create_horizontal_scrollbar()
+
+    def _create_vertical_scrollbar(self):
+        if not self._vbar:
+            self._vbar = Scrollbar(self.frame, orient="vertical")
+            self._vbar.pack(side="right", fill="y")
+            self.configure(yscrollcommand=self._vbar.set)
+            self._vbar.configure(command=self.yview)
+
+    def _create_horizontal_scrollbar(self):
+        if not self._hbar:
+            self._hbar = Scrollbar(self.frame, orient="horizontal")
+            self._hbar.pack(side="bottom", fill="x")
+            self.configure(xscrollcommand=self._hbar.set)
+            self._hbar.configure(command=self.xview)
 
 
 def example():
