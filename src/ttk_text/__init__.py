@@ -5,20 +5,45 @@ __all__ = ["ThemedText"]
 
 
 class ThemedText(Text):
-    def __init__(
-            self,
-            master=None,
-            relief=None,
-            width=None,
-            height=None,
-            style="TextFrame.TEntry",
-            class_="TextFrame",
-            **kw
-    ):
+    """
+    A themed text widget combining Tkinter Text with ttk Frame styling.
+
+    This widget provides native Tkinter Text functionality with ttk theme support.
+    Inherits from `tkinter.Text` while embedding a ttk.Frame for style management.
+
+    Style Elements:
+        - Style name: 'TextFrame.TEntry' (configurable via style parameter)
+        - Theme states: [focus, hover, pressed] with automatic state transitions
+
+    Default Events:
+        <FocusIn>       - Activates focus styling
+        <FocusOut>      - Deactivates focus styling
+        <Enter>         - Applies hover state
+        <Leave>         - Clears hover state
+        <ButtonPress-1> - Sets pressed state (left mouse down)
+        <ButtonRelease-1> - Clears pressed state (left mouse up)
+        <<ThemeChanged>> - Handles theme reload events
+
+    Geometry Management:
+        Proxies all ttk.Frame geometry methods (pack/grid/place) while maintaining
+        native Text widget functionality. Use standard geometry managers as with
+        regular ttk widgets.
+
+    Inheritance Chain:
+        ThemedText → tkinter.Text → tkinter.Widget → tkinter.BaseWidget → object
+    """
+
+    def __init__(self, master=None, *, relief=None, style="TextFrame.TEntry", class_="TextFrame", **kw):
+        """Initialize a themed text widget.
+
+        :param master: Parent widget (default=None)
+        :param relief: Frame relief style (None for theme default)
+        :param style: ttk style name (default='TextFrame.TEntry')
+        :param class_: Widget class name (default='TextFrame')
+        :param kw: Additional Text widget configuration options
+        """
         self.frame = Frame(
             master,
-            width=width,
-            height=height,
             relief=relief,
             style=style,
             class_=class_
@@ -26,8 +51,6 @@ class ThemedText(Text):
         Text.__init__(
             self,
             self.frame,
-            width=0,
-            height=0,
             relief="flat",
             borderwidth=0,
             highlightthickness=0,
@@ -85,6 +108,14 @@ class ThemedText(Text):
 
     def __str__(self):
         return str(self.frame)
+
+    @property
+    def _real_name(self):
+        """
+        Return the name of the Text widget, typically used for layout in subclasses.
+        """
+
+        return super().__str__()
 
 
 def example():

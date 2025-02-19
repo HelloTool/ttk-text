@@ -10,12 +10,9 @@ class ScrolledText(ThemedText):
     def __init__(self, master=None, **kw):
         super().__init__(master, **kw)
         self.vbar = Scrollbar(self.frame)
-        self.vbar.pack(side="right", fill="y")
+        self.vbar.pack(before=self._real_name, side="right", fill="y")
         self.vbar.configure(command=self.yview)
         self.configure(yscrollcommand=self.vbar.set)
-
-    def __str__(self):
-        return str(self.frame)
 
 
 def example():
