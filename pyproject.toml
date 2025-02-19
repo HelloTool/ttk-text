@@ -1,7 +1,7 @@
 [project]
 name = "ttk-text"
 version = "0.1.0"
-description = "Themed Tkinter Text"
+description = "Themed Tkinter Text widget with modern styling support."
 authors = [
     { name = "Jesse205", email = "jesse205@qq.com" },
 ]
