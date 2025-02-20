@@ -27,26 +27,26 @@ class ScrolledText(ThemedText):
 
     def __init__(self, master=None, *, vertical=True, horizontal=False, **kw):
         super().__init__(master, **kw)
-        self._vbar: Optional[Scrollbar] = None
-        self._hbar: Optional[Scrollbar] = None
+        self.vbar: Optional[Scrollbar] = None
+        self.hbar: Optional[Scrollbar] = None
         if vertical:
             self._create_vertical_scrollbar()
         if horizontal:
             self._create_horizontal_scrollbar()
 
     def _create_vertical_scrollbar(self):
-        if not self._vbar:
-            self._vbar = Scrollbar(self.frame, orient="vertical")
-            self._vbar.pack(side="right", fill="y")
-            self.configure(yscrollcommand=self._vbar.set)
-            self._vbar.configure(command=self.yview)
+        if not self.vbar:
+            self.vbar = Scrollbar(self.frame, orient="vertical")
+            self.vbar.pack(before=self._real_name, side="right", fill="y")
+            self.configure(yscrollcommand=self.vbar.set)
+            self.vbar.configure(command=self.yview)
 
     def _create_horizontal_scrollbar(self):
-        if not self._hbar:
-            self._hbar = Scrollbar(self.frame, orient="horizontal")
-            self._hbar.pack(side="bottom", fill="x")
-            self.configure(xscrollcommand=self._hbar.set)
-            self._hbar.configure(command=self.xview)
+        if not self.hbar:
+            self.hbar = Scrollbar(self.frame, orient="horizontal")
+            self.hbar.pack(before=self._real_name, side="bottom", fill="x")
+            self.configure(xscrollcommand=self.hbar.set)
+            self.hbar.configure(command=self.xview)
 
 
 def example():
