@@ -11,7 +11,7 @@ maintainers = [
 dependencies = []
 requires-python = ">=3.8"
 readme = "README_pypi.md"
-license = { file = "LICENSE" }
+license = "MIT"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
@@ -28,6 +28,14 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 8",
     "Operating System :: Microsoft :: Windows :: Windows 7",
     "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = [
+    "ttk",
+    "ttk-text",
+    "tkinter",
+    "tkinter-text",
+    "tk",
+    "tk-text",
 ]
 
 [project.urls]
