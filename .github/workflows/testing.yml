@@ -1,7 +1,6 @@
 name: Testing
 
 on:
-  workflow_dispatch:
   push:
     branches: [ "main" ]
   pull_request:
@@ -9,22 +8,20 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    env:
-      DISPLAY: ":99"
+    runs-on: windows-latest # TODO: Use ubuntu-latest
     strategy:
       matrix:
         python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12", "3.13" ]
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Xvfb
-        run: Xvfb $DISPLAY -screen 0 1280x1024x24 &
       - name: Setup PDM with Python ${{ matrix.python-version }}
         uses: pdm-project/setup-pdm@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: pdm install -G:all
+        run: |
+          pdm use ${{ matrix.python-version }}
+          pdm install -G:all
       - name: Test with pytest
         run: pdm run test
 
