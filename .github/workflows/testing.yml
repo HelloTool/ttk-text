@@ -11,17 +11,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DISPLAY: 99
+      DISPLAY: ":99"
     strategy:
       matrix:
         python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12", "3.13" ]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Xvfb
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb
-          Xvfb $DISPLAY -screen 0 1280x1024x24 &
+        run: Xvfb $DISPLAY -screen 0 1280x1024x24 &
       - name: Setup PDM with Python ${{ matrix.python-version }}
         uses: pdm-project/setup-pdm@v4
         with:
