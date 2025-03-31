@@ -1,3 +1,4 @@
+from tkinter import Text
 from tkinter.ttk import Scrollbar
 from typing import Optional
 
@@ -37,14 +38,16 @@ class ScrolledText(ThemedText):
     def _create_vertical_scrollbar(self):
         if not self.vbar:
             self.vbar = Scrollbar(self.frame, orient="vertical")
-            self.vbar.pack(before=self._real_name, side="right", fill="y")
+            # noinspection PyTypeChecker
+            self.vbar.pack(before=Text.__str__(self), side="right", fill="y")
             self.configure(yscrollcommand=self.vbar.set)
             self.vbar.configure(command=self.yview)
 
     def _create_horizontal_scrollbar(self):
         if not self.hbar:
             self.hbar = Scrollbar(self.frame, orient="horizontal")
-            self.hbar.pack(before=self._real_name, side="bottom", fill="x")
+            # noinspection PyTypeChecker
+            self.hbar.pack(before=Text.__str__(self), side="bottom", fill="x")
             self.configure(xscrollcommand=self.hbar.set)
             self.hbar.configure(command=self.xview)
 

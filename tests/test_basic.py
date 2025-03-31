@@ -1,7 +1,6 @@
 import pytest
 
 
-
 def test_state_focus(themed_texts):
     text1, text2 = themed_texts
     text1.focus()
@@ -17,3 +16,7 @@ def test_state_focus(themed_texts):
 def test_inheritance(themed_text):
     from tkinter import Text
     assert isinstance(themed_text, Text)
+
+
+def test_path(themed_text):
+    assert str(themed_text) == str(themed_text.frame)

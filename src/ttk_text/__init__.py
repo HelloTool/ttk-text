@@ -110,14 +110,6 @@ class ThemedText(Text):
     def __str__(self):
         return str(self.frame)
 
-    @property
-    def _real_name(self):
-        """
-        Return the name of the Text widget, typically used for layout in subclasses.
-        """
-
-        return super().__str__()
-
 
 def example():
     from tkinter import Tk
