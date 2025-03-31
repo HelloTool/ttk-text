@@ -2,11 +2,8 @@
 
 # TtkText
 
-[简体中文](https://github.com/Jesse205/TtkText/blob/main/README_zh.md) |
-**English** |
-<small>More translations are welcome!</small>
-
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](https://github.com/Jesse205/TtkText/blob/main/CODE_OF_CONDUCT.md)
+![Contributor Covenant 2.1](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)
+![MIT License](https://img.shields.io/pypi/l/ttk-text)
 
 Themed Tkinter Text widget with modern styling support.
 
@@ -47,3 +44,7 @@ Example screenshots of Windows 11, Windows 10, and Windows 7.
 ## Contributing
 
 See [CONTRIBUTING.md](https://github.com/Jesse205/TtkText/blob/main/CONTRIBUTING.md) for details.
+
+## License
+
+This project is licensed under the MIT License, see the [LICENSE](https://github.com/Jesse205/TtkText/blob/main/LICENSE) file for details.

@@ -5,6 +5,8 @@
 <small>More translations are welcome!</small>
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](./CODE_OF_CONDUCT.md)
+[![MIT License](https://img.shields.io/github/license/Jesse205/TtkText)](./LICENSE)
+[![Testing](https://github.com/Jesse205/TtkText/actions/workflows/testing.yml/badge.svg)](https://github.com/Jesse205/TtkText/actions/workflows/testing.yml)
 
 Themed Tkinter Text widget with modern styling support.
 
@@ -51,3 +53,7 @@ Example screenshots of Windows 11, Windows 10, and Windows 7.
 ## Contributing
 
 See [CONTRIBUTING.md](https://github.com/Jesse205/TtkText/blob/main/CONTRIBUTING.md) for details.
+
+## License
+
+This project is licensed under the MIT License, see the [LICENSE](./LICENSE) file for details.

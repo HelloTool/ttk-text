@@ -5,6 +5,8 @@
 <small>期待您的翻译！</small>
 
 [![贡献者公约](https://img.shields.io/badge/贡献者公约-2.1-4baaaa.svg)](./CODE_OF_CONDUCT_zh.md)
+[![MIT License](https://img.shields.io/github/license/Jesse205/TtkText?label=%E8%AE%B8%E5%8F%AF%E8%AF%81)](./LICENSE)
+[![Testing](https://github.com/Jesse205/TtkText/actions/workflows/testing.yml/badge.svg)](https://github.com/Jesse205/TtkText/actions/workflows/testing.yml)
 
 支持现代主题样式的 Tkinter Text 组件。
 
@@ -52,3 +54,7 @@ Windows 11、Windows 10 和 Windows 7 的示例截图。
 ## 参与贡献
 
 详情请参阅 [CONTRIBUTING.md](./CONTRIBUTING.md)。
+
+## 许可证
+
+本项目使用 MIT 许可证，查看 [LICENSE](./LICENSE) 了解更多信息。
