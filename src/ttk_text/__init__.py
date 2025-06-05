@@ -33,7 +33,7 @@ class ThemedText(Text):
         ThemedText → tkinter.Text → tkinter.Widget → tkinter.BaseWidget → object
     """
 
-    def __init__(self, master=None, *, relief=None, style="TextFrame.TEntry", class_="TextFrame", **kw):
+    def __init__(self, master=None, *, relief=None, style="TextFrame.TEntry", class_="TextFrame", **kwargs):
         """Initialize a themed text widget.
 
         :param master: Parent widget (default=None)
@@ -54,9 +54,11 @@ class ThemedText(Text):
             relief="flat",
             borderwidth=0,
             highlightthickness=0,
-            **kw
+            **kwargs
         )
-        self.pack(side="left", fill="both", expand=True)
+        self.frame.grid_columnconfigure(1, weight=1)
+        self.frame.grid_rowconfigure(1, weight=1)
+        self.grid(row=1, column=1, sticky="nsew")
         for sequence in ("<FocusIn>", "<FocusOut>", "<Enter>", "<Leave>", "<ButtonPress-1>", "<ButtonRelease-1>"):
             self.bind(sequence, self.__on_change_state, "+")
         self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
@@ -93,7 +95,6 @@ class ThemedText(Text):
         elif event.type == EventType.ButtonRelease:
             if event.num == 1:
                 self.frame.state(["!pressed"])
-
 
     def __on_theme_changed(self, _: Event):
         self._apply_theme()

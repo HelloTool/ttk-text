@@ -1,5 +1,5 @@
 from tkinter import Text
-from tkinter.ttk import Scrollbar
+from tkinter.ttk import Frame, Scrollbar
 from typing import Optional
 
 from ttk_text import ThemedText
@@ -24,6 +24,7 @@ class ScrolledText(ThemedText):
     Attributes:
         vbar (Scrollbar): Vertical scrollbar instance (exists when vertical=True).
         hbar (Scrollbar): Horizontal scrollbar instance (exists when horizontal=True).
+        corner (Frame): Corner frame for the scrollbars (exists when vertical=True and horizontal=True).
     """
 
     def __init__(self, master=None, *, vertical=True, horizontal=False, **kw):
@@ -34,22 +35,24 @@ class ScrolledText(ThemedText):
             self._create_vertical_scrollbar()
         if horizontal:
             self._create_horizontal_scrollbar()
+        if vertical and horizontal:
+            self._create_corner()
 
     def _create_vertical_scrollbar(self):
-        if not self.vbar:
-            self.vbar = Scrollbar(self.frame, orient="vertical")
-            # noinspection PyTypeChecker
-            self.vbar.pack(before=Text.__str__(self), side="right", fill="y")
-            self.configure(yscrollcommand=self.vbar.set)
-            self.vbar.configure(command=self.yview)
+        self.vbar = Scrollbar(self.frame, orient="vertical")
+        self.vbar.grid(row=1, column=2, sticky="ns")
+        self.configure(yscrollcommand=self.vbar.set)
+        self.vbar.configure(command=self.yview)
 
     def _create_horizontal_scrollbar(self):
-        if not self.hbar:
-            self.hbar = Scrollbar(self.frame, orient="horizontal")
-            # noinspection PyTypeChecker
-            self.hbar.pack(before=Text.__str__(self), side="bottom", fill="x")
-            self.configure(xscrollcommand=self.hbar.set)
-            self.hbar.configure(command=self.xview)
+        self.hbar = Scrollbar(self.frame, orient="horizontal")
+        self.hbar.grid(row=2, column=1, sticky="we")
+        self.configure(xscrollcommand=self.hbar.set)
+        self.hbar.configure(command=self.xview)
+
+    def _create_corner(self):
+        self.corner = Frame(self.frame)
+        self.corner.grid(row=2, column=2, sticky="nswe")
 
 
 def example():
