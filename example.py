@@ -29,7 +29,7 @@ def fix_sv_ttk(style: Style):
         if font.cget("size") < 0:
             font.configure(size=-int(font.cget("size") * 0.75))
     if sv_ttk.get_theme() == "light":
-        style.configure("ThemedText.TEntry", fieldbackground="#fdfdfd", borderwidth=5)
+        style.configure("ThemedText.TEntry", fieldbackground="#fdfdfd", textpadding=5)
         style.map(
             "ThemedText.TEntry",
             fieldbackground=[
@@ -40,7 +40,7 @@ def fix_sv_ttk(style: Style):
             ]
         )
     else:
-        style.configure("ThemedText.TEntry", fieldbackground="#292929", borderwidth=5)
+        style.configure("ThemedText.TEntry", fieldbackground="#292929", textpadding=5)
         style.map(
             "ThemedText.TEntry",
             fieldbackground=[

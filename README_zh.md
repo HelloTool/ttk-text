@@ -48,16 +48,16 @@ root.mainloop()
 
 ThemedText 的原理是通过将 Text 组件包装在 ttk Frame 中实现的。此 Frame 默认的样式名为 `ThemedText.TEntry`，因此您可以使用该名称来配置样式。
 
-| 属性             | 说明                                                 |
-| ---------------- | ---------------------------------------------------- |
-| borderwidth      | Frame 边框宽度                                       |
-| focuswidth       | 焦点边框宽度，在 TtkText 中仅用于计算 Frame 内边距值 |
-| fieldbackground  | Text 背景色                                          |
-| foreground       | Text 字体色                                          |
-| padding          | Text 外边距                                          |
-| insertwidth      | Text 光标宽度                                        |
-| selectbackground | Text 选中背景色                                      |
-| selectforeground | Text 选中字体色                                      |
+| 属性             | 说明            |
+| ---------------- | --------------- |
+| borderwidth      | Frame 边框宽度  |
+| padding          | Frame 内边距    |
+| fieldbackground  | Text 背景色     |
+| foreground       | Text 字体色     |
+| textpadding      | Text 外边距     |
+| insertwidth      | Text 光标宽度   |
+| selectbackground | Text 选中背景色 |
+| selectforeground | Text 选中字体色 |
 
 示例：将边框设置为 `1.5p`。
 
@@ -82,7 +82,7 @@ import sv_ttk
 
 def fix_sv_ttk(style: Style):
     if sv_ttk.get_theme() == "light":
-        style.configure("ThemedText.TEntry", fieldbackground="#fdfdfd", borderwidth=5)
+        style.configure("ThemedText.TEntry", fieldbackground="#fdfdfd", textpadding=5)
         style.map(
             "ThemedText.TEntry",
             fieldbackground=[
@@ -93,7 +93,7 @@ def fix_sv_ttk(style: Style):
             ]
         )
     else:
-        style.configure("ThemedText.TEntry", fieldbackground="#292929", borderwidth=5)
+        style.configure("ThemedText.TEntry", fieldbackground="#292929", textpadding=5)
         style.map(
             "ThemedText.TEntry",
             fieldbackground=[

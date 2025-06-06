@@ -7,7 +7,7 @@ from ttk_text.utils import parse_padding
 __all__ = ["ThemedText"]
 
 _DYNAMIC_OPTIONS_TEXT = {"background", "foreground", "selectbackground", "selectforeground", "insertwidth", "font",
-                         "padding", "borderwidth"}
+                         "padding"}
 
 
 class ThemedText(Text):
@@ -100,15 +100,11 @@ class ThemedText(Text):
             font=self.__lookup_without_specified("font", None, None, "TkDefaultFont"),
         )
         self.frame.configure(
-            borderwidth=self.__lookup_without_specified("borderwidth", None, None, 0)
+            padding=self.__lookup_without_specified(None, "padding", None, 1),
+            borderwidth=self.__lookup_without_specified(None, "borderwidth", None, 1),
         )
-        border_width = self.frame.cget("borderwidth")
-        frame_padding = max(self.__lookup_without_specified(None, "focuswidth", None, 2) - border_width, 0)
-        self.frame.configure(padding=frame_padding)
-
-        text_padding = parse_padding(self.__lookup_without_specified(None, "padding", None, 0))
-        final_text_padding = text_padding - frame_padding
-        super().grid_configure(padx=final_text_padding.to_padx(), pady=final_text_padding.to_pady())
+        text_padding = parse_padding(self.__lookup_without_specified(None, "textpadding", None, 0))
+        super().grid_configure(padx=text_padding.to_padx(), pady=text_padding.to_pady())
 
     def _update_stateful_style(self, state):
         super().configure(

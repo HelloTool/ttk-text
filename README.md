@@ -48,16 +48,16 @@ root.mainloop()
 
 The ThemedText component works by wrapping a Text widget inside a ttk Frame. This Frame uses the default style name `ThemedText.TEntry`, which you can use to customize its appearance.
 
-| Property         | Description                                                            |
-| ---------------- | ---------------------------------------------------------------------- |
-| borderwidth      | Frame border width                                                     |
-| focuswidth       | Focus border width, used only for Frame padding calculation in TtkText |
-| fieldbackground  | Text background color                                                  |
-| foreground       | Text font color                                                        |
-| padding          | Text external padding                                                  |
-| insertwidth      | Text cursor width                                                      |
-| selectbackground | Text selection background color                                        |
-| selectforeground | Text selection font color                                              |
+| Property         | Description                     |
+| ---------------- | ------------------------------- |
+| borderwidth      | Frame border width              |
+| padding          | Frame padding                   |
+| fieldbackground  | Text background color           |
+| foreground       | Text font color                 |
+| textpadding          | Text external padding           |
+| insertwidth      | Text cursor width               |
+| selectbackground | Text selection background color |
+| selectforeground | Text selection font color       |
 
 Example: Set border width to `1.5p`.
 
@@ -82,7 +82,7 @@ import sv_ttk
 
 def fix_sv_ttk(style: Style):
     if sv_ttk.get_theme() == "light":
-        style.configure("ThemedText.TEntry", fieldbackground="#fdfdfd", borderwidth=5)
+        style.configure("ThemedText.TEntry", fieldbackground="#fdfdfd", textpadding=5)
         style.map(
             "ThemedText.TEntry",
             fieldbackground=[
@@ -93,7 +93,7 @@ def fix_sv_ttk(style: Style):
             ]
         )
     else:
-        style.configure("ThemedText.TEntry", fieldbackground="#292929", borderwidth=5)
+        style.configure("ThemedText.TEntry", fieldbackground="#292929", textpadding=5)
         style.map(
             "ThemedText.TEntry",
             fieldbackground=[
