@@ -79,7 +79,7 @@ class ThemedText(Text):
         self._update_style()
         self.__copy_geometry_methods()
 
-    def configure(self, cnf: dict[str, Any] | None = None, **kwargs):
+    def configure(self, cnf: dict[str, Any] = None, **kwargs):
         super().configure(cnf, **kwargs)
         if cnf is not None:
             self._update_specified_options(cnf)
