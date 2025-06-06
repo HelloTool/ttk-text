@@ -68,7 +68,10 @@ class ThemedText(Text):
         self.grid(row=1, column=1, sticky="nsew")
         for sequence in ("<FocusIn>", "<FocusOut>", "<Enter>", "<Leave>", "<ButtonPress-1>", "<ButtonRelease-1>"):
             self.bind(sequence, self.__on_change_state, "+")
+            self.bind(sequence, self.__on_update_stateful_style, "+")
+            self.frame.bind(sequence, self.__on_update_stateful_style, "+")
         self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
+        self.bind("<<ThemeChanged>>", self.__on_update_stateful_style, "+")
         self.specified_options = set()
         self._update_specified_options(kwargs)
         self.__style = Style(self)
@@ -97,7 +100,7 @@ class ThemedText(Text):
         )
         padding = self.__lookup_without_specified("padding", None, None, 0)
         if padding is not None:
-            left, top, right, bottom,*_ = (padding if isinstance(padding, tuple) else (padding,)) + (0, 0, 0)
+            left, top, right, bottom, *_ = (padding if isinstance(padding, tuple) else (padding,)) + (0, 0, 0)
             super().grid_configure(padx=(left, right), pady=(top, bottom))
         else:
             super().grid_configure(padx=0, pady=0)
@@ -127,11 +130,12 @@ class ThemedText(Text):
         elif event.type == EventType.ButtonRelease:
             if event.num == 1:
                 self.frame.state(["!pressed"])
+
+    def __on_update_stateful_style(self, _: Event):
         self._update_stateful_style(self.frame.state())
 
     def __on_theme_changed(self, _: Event):
         self._update_style()
-        self._update_stateful_style(self.frame.state())
 
     def __lookup_without_specified(self, option: str, style_option: str = None, state=None, default=None):
         if option not in self.specified_options:
