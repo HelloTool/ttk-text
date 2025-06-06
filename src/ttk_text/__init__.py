@@ -72,7 +72,7 @@ class ThemedText(Text):
             self.frame.bind(sequence, self.__on_update_stateful_style, "+")
         self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
         self.bind("<<ThemeChanged>>", self.__on_update_stateful_style, "+")
-        self.specified_options = set()
+        self.__specified_options = set()
         self._update_specified_options(kwargs)
         self.__style = Style(self)
         self._update_style()
@@ -89,7 +89,7 @@ class ThemedText(Text):
     def _update_specified_options(self, options: dict[str, Any]):
         non_null_keys = {k for k, v in options.items() if v is not None}
         specified_options = _DYNAMIC_OPTIONS_TEXT & non_null_keys
-        self.specified_options = self.specified_options | specified_options
+        self.__specified_options = self.__specified_options | specified_options
 
     def _update_style(self):
         super().configure(
@@ -104,8 +104,13 @@ class ThemedText(Text):
             super().grid_configure(padx=(left, right), pady=(top, bottom))
         else:
             super().grid_configure(padx=0, pady=0)
+
         self.frame.configure(
-            borderwidth=self.__lookup_without_specified("borderwidth", None, None, 2),
+            borderwidth=self.__lookup_without_specified("borderwidth", None, None, 2)
+        )
+        self.frame.configure(
+            padding=max(self.__lookup_without_specified(None, "focuswidth", None, 0)
+                        - self.frame.cget("borderwidth"), 0),
         )
 
     def _update_stateful_style(self, state):
@@ -137,8 +142,8 @@ class ThemedText(Text):
     def __on_theme_changed(self, _: Event):
         self._update_style()
 
-    def __lookup_without_specified(self, option: str, style_option: str = None, state=None, default=None):
-        if option not in self.specified_options:
+    def __lookup_without_specified(self, option: str = None, style_option: str = None, state=None, default=None):
+        if option is None or option not in self.__specified_options:
             style_option = style_option if style_option is not None else option
             result = self.__style.lookup(self.frame.cget("style"), style_option, state, default)
             if result == "":
