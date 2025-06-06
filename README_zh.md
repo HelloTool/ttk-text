@@ -42,6 +42,74 @@ scrolled_text.pack(fill="both", expand=True)
 root.mainloop()
 ```
 
+## 用法
+
+### 配置样式
+
+ThemedText 的原理是通过将 Text 组件包装在 ttk Frame 中实现的。此 Frame 默认的样式名为 `ThemedText.TEntry`，因此您可以使用该名称来配置样式。
+
+| 属性             | 说明                                                 |
+| ---------------- | ---------------------------------------------------- |
+| borderwidth      | Frame 边框宽度                                       |
+| focuswidth       | 焦点边框宽度，在 TtkText 中仅用于计算 Frame 内边距值 |
+| fieldbackground  | Text 背景色                                          |
+| foreground       | Text 字体色                                          |
+| padding          | Text 外边距                                          |
+| insertwidth      | Text 光标宽度                                        |
+| selectbackground | Text 选中背景色                                      |
+| selectforeground | Text 选中字体色                                      |
+
+示例：将边框设置为 `1.5p`。
+
+```python
+from tkinter.ttk import Style
+
+style = Style()
+style.configure("ThemedText.TEntry", borderwidth="1.5p")
+```
+
+### 修复主题
+
+部分第三方主题可能与 TtkText 不兼容，您可以在设置主题后调用以下函数来修复该问题：
+
+<details>
+<summary>Sun Valley ttk theme</summary>
+
+```python
+from tkinter.ttk import Style
+import sv_ttk
+
+
+def fix_sv_ttk(style: Style):
+    if sv_ttk.get_theme() == "light":
+        style.configure("ThemedText.TEntry", fieldbackground="#fdfdfd", borderwidth=5)
+        style.map(
+            "ThemedText.TEntry",
+            fieldbackground=[
+                ("hover", "!focus", "#f9f9f9"),
+            ],
+            foreground=[
+                ("pressed", style.lookup("TEntry", "foreground")),
+            ]
+        )
+    else:
+        style.configure("ThemedText.TEntry", fieldbackground="#292929", borderwidth=5)
+        style.map(
+            "ThemedText.TEntry",
+            fieldbackground=[
+                ("hover", "!focus", "#2f2f2f"),
+                ("focus", "#1c1c1c"),
+            ],
+            foreground=[
+                ("pressed", style.lookup("TEntry", "foreground")),
+            ]
+        )
+
+sv_ttk.set_theme("light")
+fix_sv_ttk(Style())
+```
+
+</details>
 
 ## 屏幕截图
 

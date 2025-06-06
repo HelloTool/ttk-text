@@ -2,10 +2,10 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default", "test"]
+groups = ["default", "example", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:df6c07367878952810bcbc33c926e44159412676fe08d6c3bf61a6cb5a3df8d6"
+content_hash = "sha256:07df869bee6a7ce13d5e912e5aaf51fa39cfa607422271826a6b54de22e95d14"
 
 [[metadata.targets]]
 requires_python = ">=3.8"
@@ -84,6 +84,17 @@ dependencies = [
 files = [
     {file = "pytest-8.3.4-py3-none-any.whl", hash = "sha256:50e16d954148559c9a74109af1eaf0c945ba2d8f30f0a3d3335edde19788b6f6"},
     {file = "pytest-8.3.4.tar.gz", hash = "sha256:965370d062bce11e73868e0335abac31b4d3de0e82f4007408d242b4f8610761"},
+]
+
+[[package]]
+name = "sv-ttk"
+version = "2.6.0"
+requires_python = ">=3.8"
+summary = "A gorgeous theme for Tkinter, based on Windows 11's UI"
+groups = ["example"]
+files = [
+    {file = "sv_ttk-2.6.0-py3-none-any.whl", hash = "sha256:4319c52edf2e14732fe84bdc9788e26f9e9a1ad79451ec0f89f0120ffc8105d9"},
+    {file = "sv_ttk-2.6.0.tar.gz", hash = "sha256:3fd440396c95e30e88f686fcf28be425480f7320d6bf346f9cea5d6f56702cc2"},
 ]
 
 [[package]]
