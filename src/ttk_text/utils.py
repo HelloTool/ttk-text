@@ -1,4 +1,4 @@
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple, Optional, Tuple
 
 
 class Padding(NamedTuple):
@@ -7,10 +7,10 @@ class Padding(NamedTuple):
     right: Any
     bottom: Any
 
-    def to_padx(self) -> tuple[Any, Any]:
+    def to_padx(self) -> Tuple[Any, Any]:
         return self.left, self.right
 
-    def to_pady(self) -> tuple[Any, Any]:
+    def to_pady(self) -> Tuple[Any, Any]:
         return self.top, self.bottom
 
 
