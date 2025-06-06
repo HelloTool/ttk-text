@@ -95,9 +95,14 @@ class ThemedText(Text):
             insertwidth=self.__lookup_without_specified("insertwidth", None, ["focus"], 1),
             font=self.__lookup_without_specified("font", None, None, "TkDefaultFont"),
         )
+        padding = self.__lookup_without_specified("padding", None, None, 0)
+        if padding is not None:
+            left, top, right, bottom,*_ = (padding if isinstance(padding, tuple) else (padding,)) + (0, 0, 0)
+            super().grid_configure(padx=(left, right), pady=(top, bottom))
+        else:
+            super().grid_configure(padx=0, pady=0)
         self.frame.configure(
-            padding=self.__lookup_without_specified("padding", None, None, 1),
-            borderwidth=self.__lookup_without_specified("borderwidth", None, None, 1),
+            borderwidth=self.__lookup_without_specified("borderwidth", None, None, 2),
         )
 
     def _update_stateful_style(self, state):
