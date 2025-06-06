@@ -1,3 +1,5 @@
+from tkinter.ttk import Button, Entry, Style
+
 import pytest
 
 
@@ -20,3 +22,22 @@ def test_inheritance(themed_text):
 
 def test_path(themed_text):
     assert str(themed_text) == str(themed_text.frame)
+
+
+def test_configuration(app, style):
+    from ttk_text import ThemedText
+    style.theme_use("classic")
+    app.update_idletasks()
+    text = ThemedText(app, background="red", foreground="blue")
+    text.pack()
+    assert text.cget("background") == "red"
+    assert text.cget("foreground") == "blue"
+    assert text.cget("selectbackground") == style.lookup("TEntry", "selectbackground", ["focus"])
+    assert text.cget("selectforeground") == style.lookup("TEntry", "selectforeground", ["focus"])
+    text.configure(background="black", foreground="white", selectbackground="gray", selectforeground="black")
+    style.theme_use("clam")
+    app.update_idletasks()
+    assert text.cget("background") == "black"
+    assert text.cget("foreground") == "white"
+    assert text.cget("selectbackground") == "gray"
+    assert text.cget("selectforeground") == "black"

@@ -3,6 +3,11 @@ from tkinter.ttk import Frame, Style
 
 __all__ = ["ThemedText"]
 
+from typing import Any
+
+_DYNAMIC_OPTIONS_TEXT = {"background", "foreground", "selectbackground", "selectforeground", "insertwidth", "font",
+                         "padding", "borderwidth"}
+
 
 class ThemedText(Text):
     """
@@ -12,7 +17,7 @@ class ThemedText(Text):
     Inherits from `tkinter.Text` while embedding a ttk.Frame for style management.
 
     Style Elements:
-        - Style name: 'TextFrame.TEntry' (configurable via style parameter)
+        - Style name: 'ThemedText.TEntry' (configurable via style parameter)
         - Theme states: [focus, hover, pressed] with automatic state transitions
 
     Default Events:
@@ -33,7 +38,7 @@ class ThemedText(Text):
         ThemedText → tkinter.Text → tkinter.Widget → tkinter.BaseWidget → object
     """
 
-    def __init__(self, master=None, *, relief=None, style="TextFrame.TEntry", class_="TextFrame", **kwargs):
+    def __init__(self, master=None, *, relief=None, style="ThemedText.TEntry", class_="ThemedTextFrame", **kwargs):
         """Initialize a themed text widget.
 
         :param master: Parent widget (default=None)
@@ -46,7 +51,9 @@ class ThemedText(Text):
             master,
             relief=relief,
             style=style,
-            class_=class_
+            class_=class_,
+            padding=kwargs.pop("padding") if "padding" in kwargs else None,
+            borderwidth=kwargs.pop("borderwidth") if "borderwidth" in kwargs else None
         )
         Text.__init__(
             self,
@@ -62,21 +69,41 @@ class ThemedText(Text):
         for sequence in ("<FocusIn>", "<FocusOut>", "<Enter>", "<Leave>", "<ButtonPress-1>", "<ButtonRelease-1>"):
             self.bind(sequence, self.__on_change_state, "+")
         self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
+        self.specified_options = set()
+        self._update_specified_options(kwargs)
+        self.__style = Style(self)
+        self._update_style()
         self.__copy_geometry_methods()
-        self._apply_theme()
 
-    def _apply_theme(self):
-        style_obj = Style(self)
-        style = self.frame.cget("style")
-        self.configure(
-            selectbackground=style_obj.lookup(style, "selectbackground", ["focus"]) or None,
-            selectforeground=style_obj.lookup(style, "selectforeground", ["focus"]) or None,
-            insertwidth=style_obj.lookup(style, "insertwidth", ["focus"], 1),
-            font=style_obj.lookup(style, "font", None, "TkDefaultFont"),
+    def configure(self, cnf: dict[str, Any] | None = None, **kwargs):
+        super().configure(cnf, **kwargs)
+        if cnf is not None:
+            self._update_specified_options(cnf)
+        self._update_specified_options(kwargs)
+
+    config = configure
+
+    def _update_specified_options(self, options: dict[str, Any]):
+        non_null_keys = {k for k, v in options.items() if v is not None}
+        specified_options = _DYNAMIC_OPTIONS_TEXT & non_null_keys
+        self.specified_options = self.specified_options | specified_options
+
+    def _update_style(self):
+        super().configure(
+            selectbackground=self.__lookup_without_specified("selectbackground", None, ["focus"]),
+            selectforeground=self.__lookup_without_specified("selectforeground", None, ["focus"]),
+            insertwidth=self.__lookup_without_specified("insertwidth", None, ["focus"], 1),
+            font=self.__lookup_without_specified("font", None, None, "TkDefaultFont"),
         )
         self.frame.configure(
-            padding=style_obj.lookup(style, "padding", None, 1),
-            borderwidth=style_obj.lookup(style, "borderwidth", None, 1),
+            padding=self.__lookup_without_specified("padding", None, None, 1),
+            borderwidth=self.__lookup_without_specified("borderwidth", None, None, 1),
+        )
+
+    def _update_stateful_style(self, state):
+        super().configure(
+            background=self.__lookup_without_specified("background", "fieldbackground", state),
+            foreground=self.__lookup_without_specified("foreground", None, state),
         )
 
     def __on_change_state(self, event: Event):
@@ -95,9 +122,20 @@ class ThemedText(Text):
         elif event.type == EventType.ButtonRelease:
             if event.num == 1:
                 self.frame.state(["!pressed"])
+        self._update_stateful_style(self.frame.state())
 
     def __on_theme_changed(self, _: Event):
-        self._apply_theme()
+        self._update_style()
+        self._update_stateful_style(self.frame.state())
+
+    def __lookup_without_specified(self, option: str, style_option: str = None, state=None, default=None):
+        if option not in self.specified_options:
+            style_option = style_option if style_option is not None else option
+            result = self.__style.lookup(self.frame.cget("style"), style_option, state, default)
+            if result == "":
+                return default
+            return result
+        return None
 
     def __copy_geometry_methods(self):
         """
