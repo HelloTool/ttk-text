@@ -1,6 +1,6 @@
 from tkinter import Event, EventType, Grid, Pack, Place, Text
 from tkinter.ttk import Frame, Style
-from typing import Any
+from typing import Any, Dict
 
 from ttk_text.utils import parse_padding
 
@@ -79,7 +79,7 @@ class ThemedText(Text):
         self._update_style()
         self.__copy_geometry_methods()
 
-    def configure(self, cnf: dict[str, Any] = None, **kwargs):
+    def configure(self, cnf: Dict[str, Any] = None, **kwargs):
         super().configure(cnf, **kwargs)
         if cnf is not None:
             self._update_specified_options(cnf)
@@ -87,7 +87,7 @@ class ThemedText(Text):
 
     config = configure
 
-    def _update_specified_options(self, options: dict[str, Any]):
+    def _update_specified_options(self, options: Dict[str, Any]):
         non_null_keys = {k for k, v in options.items() if v is not None}
         specified_options = _DYNAMIC_OPTIONS_TEXT & non_null_keys
         self.__specified_options = self.__specified_options | specified_options
