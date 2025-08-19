@@ -7,7 +7,7 @@ from ttk_text.utils import parse_padding
 __all__ = ["ThemedText"]
 
 _DYNAMIC_OPTIONS_TEXT = {"background", "foreground", "selectbackground", "selectforeground", "insertwidth", "font",
-                         "padding"}
+                         "padding", "borderwidth"}
 
 
 class ThemedText(Text):
@@ -48,13 +48,16 @@ class ThemedText(Text):
         :param class_: Widget class name (default='TextFrame')
         :param kw: Additional Text widget configuration options
         """
+        frame_kwargs = {
+            "padding": kwargs.pop("padding", None),
+            "borderwidth": kwargs.pop("textborderwidth", None),
+        }
         self.frame = Frame(
             master,
             relief=relief,
             style=style,
             class_=class_,
-            padding=kwargs.pop("padding") if "padding" in kwargs else None,
-            borderwidth=kwargs.pop("borderwidth") if "borderwidth" in kwargs else None
+            **frame_kwargs,
         )
         Text.__init__(
             self,
@@ -74,15 +77,27 @@ class ThemedText(Text):
         self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
         self.bind("<<ThemeChanged>>", self.__on_update_stateful_style, "+")
         self.__specified_options = set()
+        self._update_specified_options(frame_kwargs)
         self._update_specified_options(kwargs)
         self.__style = Style(self)
         self._update_style()
         self.__copy_geometry_methods()
 
     def configure(self, cnf: Dict[str, Any] = None, **kwargs):
+        frame_cnf = {
+            "padding": cnf.pop("padding", None),
+            "borderwidth": cnf.pop("textborderwidth", None),
+        } if cnf is not None else None
+        frame_kwargs = {
+            "padding": kwargs.pop("padding", None),
+            "borderwidth": kwargs.pop("textborderwidth", None),
+        }
+        self.frame.configure(frame_cnf, **frame_kwargs)
         super().configure(cnf, **kwargs)
         if cnf is not None:
+            self._update_specified_options(frame_cnf)
             self._update_specified_options(cnf)
+        self._update_specified_options(frame_kwargs)
         self._update_specified_options(kwargs)
 
     config = configure
@@ -100,8 +115,8 @@ class ThemedText(Text):
             font=self.__lookup_without_specified("font", None, None, "TkDefaultFont"),
         )
         self.frame.configure(
-            padding=self.__lookup_without_specified(None, "padding", None, 1),
-            borderwidth=self.__lookup_without_specified(None, "borderwidth", None, 1),
+            padding=self.__lookup_without_specified("padding", None, None, 1),
+            borderwidth=self.__lookup_without_specified("borderwidth", None, None, 1),
         )
         text_padding = parse_padding(self.__lookup_without_specified(None, "textpadding", None, 0))
         super().grid_configure(padx=text_padding.to_padx(), pady=text_padding.to_pady())
