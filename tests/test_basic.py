@@ -1,8 +1,3 @@
-from tkinter.ttk import Button, Entry, Style
-
-import pytest
-
-
 def test_state_focus(themed_texts):
     text1, text2 = themed_texts
     text1.focus()
