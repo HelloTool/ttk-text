@@ -39,18 +39,18 @@ class ThemedText(Text):
         ThemedText → tkinter.Text → tkinter.Widget → tkinter.BaseWidget → object
     """
 
-    def __init__(self, master=None, *, relief=None, style="ThemedText.TEntry", class_="ThemedTextFrame", **kwargs):
+    def __init__(self, master=None, *, relief=None, style="ThemedText.TEntry", class_="ThemedText", **kwargs):
         """Initialize a themed text widget.
 
         :param master: Parent widget (default=None)
         :param relief: Frame relief style (None for theme default)
-        :param style: ttk style name (default='TextFrame.TEntry')
-        :param class_: Widget class name (default='TextFrame')
+        :param style: ttk style name (default='ThemedText.TEntry')
+        :param class_: Widget class name (default='ThemedText')
         :param kw: Additional Text widget configuration options
         """
         frame_kwargs = {
             "padding": kwargs.pop("padding", None),
-            "borderwidth": kwargs.pop("textborderwidth", None),
+            "borderwidth": kwargs.pop("borderwidth", None),
         }
         self.frame = Frame(
             master,
@@ -86,11 +86,11 @@ class ThemedText(Text):
     def configure(self, cnf: Dict[str, Any] = None, **kwargs):
         frame_cnf = {
             "padding": cnf.pop("padding", None),
-            "borderwidth": cnf.pop("textborderwidth", None),
+            "borderwidth": cnf.pop("borderwidth", None),
         } if cnf is not None else None
         frame_kwargs = {
             "padding": kwargs.pop("padding", None),
-            "borderwidth": kwargs.pop("textborderwidth", None),
+            "borderwidth": kwargs.pop("borderwidth", None),
         }
         self.frame.configure(frame_cnf, **frame_kwargs)
         super().configure(cnf, **kwargs)
