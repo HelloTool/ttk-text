@@ -1,6 +1,6 @@
 [project]
 name = "ttk-text"
-version = "0.2.1"
+version = "0.2.2"
 description = "Themed Tkinter Text widget with modern styling support."
 authors = [
     { name = "Jesse205", email = "jesse205@qq.com" },
@@ -44,10 +44,10 @@ Changelog = "https://github.com/Jesse205/TtkText/releases"
 
 [dependency-groups]
 test = [
-    "pytest>=8.3.4",
+    "pytest>=8.4.2",
 ]
 example = [
-    "sv-ttk>=2.6.0",
+    "sv-ttk>=2.6.1",
 ]
 
 [tool.pdm]
