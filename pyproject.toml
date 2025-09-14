@@ -44,10 +44,10 @@ Changelog = "https://github.com/Jesse205/TtkText/releases"
 
 [dependency-groups]
 test = [
-    "pytest>=8.4.2",
+    "pytest>=8.3.4",
 ]
 example = [
-    "sv-ttk>=2.6.1",
+    "sv-ttk>=2.6.0",
 ]
 
 [tool.pdm]
