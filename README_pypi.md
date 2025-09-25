@@ -1,6 +1,6 @@
 <!-- Warning! This file will be included in the wheel package. Please do not use relative paths. -->
 
-# TtkText
+# ttk-text
 
 ![Contributor Covenant 2.1](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)
 ![MIT License](https://img.shields.io/pypi/l/ttk-text)

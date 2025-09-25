@@ -38,9 +38,9 @@ keywords = [
 ]
 
 [project.urls]
-Repository = "https://github.com/Jesse205/TtkText"
-Tracker = "https://github.com/Jesse205/TtkText/issues"
-Changelog = "https://github.com/Jesse205/TtkText/releases"
+Repository = "https://github.com/HelloTool/ttk-text"
+Tracker = "https://github.com/HelloTool/ttk-text/issues"
+Changelog = "https://github.com/HelloTool/ttk-text/releases"
 
 [dependency-groups]
 test = [
