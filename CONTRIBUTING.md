@@ -24,13 +24,15 @@ This project is managed using PDM. For more information about PDM, please refer 
 
 Before writing code, you need to set up the development environment.
 
-1. Install PDM.
-2. Install dependencies by running `pdm install`.
+1. Install Git and PDM.
+2. Clone the repository locally by running `git clone https://github.com/HelloTool/ttk-text`.
+3. Initialize submodules by running `git submodule update --init --recursive`.
+4. Install dependencies by running `pdm install`.
 
 ### Running the Example
 
 ```bash
-pdm run example
+pdm run example.py
 ```
 
 ## Standards

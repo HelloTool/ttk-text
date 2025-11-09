@@ -109,6 +109,7 @@ style.configure("ThemedText.TEntry", borderwidth="1.5p")
 <summary>Sun Valley ttk theme</summary>
 
 ```python
+from tkinter import Tk
 from tkinter.ttk import Style
 import sv_ttk
 
@@ -138,8 +139,63 @@ def fix_sv_ttk(style: Style):
             ]
         )
 
+
+# 示例
+app = Tk()
 sv_ttk.set_theme("light")
 fix_sv_ttk(Style())
+app.mainloop()
+```
+
+</details>
+
+<details>
+<summary>Azure-ttk-theme</summary>
+
+```python
+from tkinter import Tk
+from tkinter.ttk import Style
+
+
+def fix_azure_ttk(style: Style):
+    if style.theme_use() == "azure-light":
+        style.configure("ThemedText.TEntry", fieldbackground="#ffffff", textpadding=5)
+    else:
+        style.configure("ThemedText.TEntry", fieldbackground="#333333", textpadding=5)
+
+
+# 示例
+app = Tk()
+app.tk.call("source", "azure.tcl")
+Style().theme_use("azure-light")
+app.tk.call("set_theme", "light")
+fix_azure_ttk(Style())
+app.mainloop()
+```
+
+</details>
+
+<details>
+<summary>Forest-ttk-theme</summary>
+
+```python
+from tkinter import Tk
+from tkinter.ttk import Style
+
+
+def fix_forest_ttk(style: Style):
+    if style.theme_use() == "forest-light":
+        style.configure("ThemedText.TEntry", fieldbackground="#ffffff", textpadding=5, font="TkTextFont")
+    else:
+        style.configure("ThemedText.TEntry", fieldbackground="#313131", textpadding=5, font="TkTextFont")
+
+
+# 示例
+app = Tk()
+app.tk.call("source", "external-themes/forest-ttk-theme/forest-light.tcl")
+Style().theme_use("forest-light")
+fix_forest_ttk(Style())
+app.mainloop()
 ```
 
 </details>
