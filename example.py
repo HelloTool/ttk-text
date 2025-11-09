@@ -1,4 +1,5 @@
 import inspect
+import os
 import sys
 from tkinter import StringVar, Tk
 from tkinter.font import nametofont
@@ -11,6 +12,10 @@ try:
     import sv_ttk
 except ModuleNotFoundError:
     sv_ttk = None
+
+SUN_VALLEY_THEMES = ("sun-valley-light", "sun-valley-dark")
+FOREST_THEMES = ("forest-light", "forest-dark")
+AZURE_THEMES = ("azure-light", "azure-dark")
 
 
 def enable_dpi_aware():
@@ -53,6 +58,20 @@ def fix_sv_ttk(style: Style):
         )
 
 
+def fix_forest_ttk(style: Style):
+    if style.theme_use() == "forest-light":
+        style.configure("ThemedText.TEntry", fieldbackground="#ffffff", textpadding=5, font="TkTextFont")
+    else:
+        style.configure("ThemedText.TEntry", fieldbackground="#313131", textpadding=5, font="TkTextFont")
+
+
+def fix_azure_ttk(style: Style):
+    if style.theme_use() == "azure-light":
+        style.configure("ThemedText.TEntry", fieldbackground="#ffffff", textpadding=5)
+    else:
+        style.configure("ThemedText.TEntry", fieldbackground="#333333", textpadding=5)
+
+
 def main():
     enable_dpi_aware()
     root = Tk()
@@ -61,26 +80,52 @@ def main():
 
     style = Style(root)
 
-    if sv_ttk:
-        sv_ttk.get_theme()  # Initialize sv themes
+    if sv_ttk:  # Initialize sv themes
+        sv_ttk.get_theme()
+
+    lazy_load_themes = {}
+    if os.path.exists("external-themes/forest-ttk-theme/forest-light.tcl"):
+        lazy_load_themes["forest-light"] = "external-themes/forest-ttk-theme/forest-light.tcl"
+
+    if os.path.exists("external-themes/forest-ttk-theme/forest-dark.tcl"):
+        lazy_load_themes["forest-dark"] = "external-themes/forest-ttk-theme/forest-dark.tcl"
+
+    if os.path.exists("external-themes/azure-ttk-theme/azure.tcl"):
+        lazy_load_themes["azure-dark"] = "external-themes/azure-ttk-theme/azure.tcl"
+        lazy_load_themes["azure-light"] = "external-themes/azure-ttk-theme/azure.tcl"
 
     theme_variable = StringVar(root, value=style.theme_use())
-    theme_names = list(style.theme_names())
+    theme_names = [*style.theme_names(), *lazy_load_themes.keys()]
     theme_names.sort()
 
-    def on_theme_changed(*_):
-        new_theme_name = theme_variable.get()
-        if new_theme_name in style.theme_names():
-            style.theme_use(new_theme_name)
-            if new_theme_name in ["sun-valley-light", "sun-valley-dark"]:
-                fix_sv_ttk(style)
+    def on_theme_variable_changed(*_):
+        theme_name = theme_variable.get()
+        if theme_name not in style.theme_names() and theme_name in lazy_load_themes:
+            root.tk.call("source", lazy_load_themes[theme_name])
+
+        if theme_name in style.theme_names():
+            style.theme_use(theme_name)
+            if theme_name in AZURE_THEMES:
+                root.tk.call("set_theme", theme_name.replace("azure-", ""))
         else:
             theme_variable.set(style.theme_use())
 
-    theme_variable.trace_add("write", on_theme_changed)
+    theme_variable.trace_add("write", on_theme_variable_changed)
 
-    # Update background color when theme changes
-    root.bind("<<ThemeChanged>>", lambda _: root.configure(background=style.lookup("TFrame", "background") or None))
+    def on_theme_changed(*_):
+        # Update background color when theme changes
+        root.configure(background=style.lookup("TFrame", "background") or None)
+
+        # Fix theme
+        theme_name = style.theme_use()
+        if theme_name in SUN_VALLEY_THEMES:
+            fix_sv_ttk(style)
+        elif theme_name in FOREST_THEMES:
+            fix_forest_ttk(style)
+        elif theme_name in AZURE_THEMES:
+            fix_azure_ttk(style)
+
+    root.bind("<<ThemeChanged>>", on_theme_changed)
 
     sizegrip = Sizegrip(root)
     sizegrip.place(relx=1, rely=1, anchor="se", bordermode="outside")
