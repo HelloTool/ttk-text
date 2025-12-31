@@ -3,7 +3,7 @@ import os
 import sys
 from tkinter import StringVar, Tk
 from tkinter.font import nametofont
-from tkinter.ttk import Combobox, Entry, Label, LabelFrame, Sizegrip, Style
+from tkinter.ttk import Combobox, Entry, Frame, Label, LabelFrame, Sizegrip, Style
 
 from ttk_text import ThemedText
 from ttk_text.scrolled_text import ScrolledText
@@ -42,7 +42,7 @@ def fix_sv_ttk(style: Style):
             ],
             foreground=[
                 ("pressed", style.lookup("TEntry", "foreground")),
-            ]
+            ],
         )
     else:
         style.configure("ThemedText.TEntry", fieldbackground="#292929", textpadding=5)
@@ -54,7 +54,7 @@ def fix_sv_ttk(style: Style):
             ],
             foreground=[
                 ("pressed", style.lookup("TEntry", "foreground")),
-            ]
+            ],
         )
 
 
@@ -77,6 +77,9 @@ def main():
     root = Tk()
     root.title("ThemedText")
     root.configure(padx="4p", pady="4p")
+
+    background_frame = Frame(root)
+    background_frame.place(relheight=1, relwidth=1, bordermode="outside")
 
     style = Style(root)
 
@@ -113,9 +116,6 @@ def main():
     theme_variable.trace_add("write", on_theme_variable_changed)
 
     def on_theme_changed(*_):
-        # Update background color when theme changes
-        root.configure(background=style.lookup("TFrame", "background") or None)
-
         # Fix theme
         theme_name = style.theme_use()
         if theme_name in SUN_VALLEY_THEMES:
