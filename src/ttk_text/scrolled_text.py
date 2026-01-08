@@ -1,4 +1,3 @@
-from tkinter import Text
 from tkinter.ttk import Frame, Scrollbar
 from typing import Optional
 

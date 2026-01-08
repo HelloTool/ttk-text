@@ -4,6 +4,7 @@ import pytest
 @pytest.fixture(scope="session")
 def app():
     import tkinter as tk
+
     root = tk.Tk()
     yield root
     root.destroy()
@@ -12,12 +13,14 @@ def app():
 @pytest.fixture(scope="session")
 def style(app):
     from tkinter.ttk import Style
+
     yield Style(app)
 
 
 @pytest.fixture
 def themed_text(app):
     from ttk_text import ThemedText
+
     text = ThemedText(app)
     text.pack()
     yield text
@@ -28,6 +31,7 @@ def themed_text(app):
 @pytest.fixture
 def themed_texts(app):
     from ttk_text import ThemedText
+
     text1 = ThemedText(app)
     text1.pack()
     text2 = ThemedText(app)
@@ -42,6 +46,7 @@ def themed_texts(app):
 @pytest.fixture
 def scrolled_text(app):
     from ttk_text.scrolled_text import ScrolledText
+
     text = ScrolledText(app, vertical=True, horizontal=True)
     text.pack()
     yield text
