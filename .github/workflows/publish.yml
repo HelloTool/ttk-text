@@ -18,6 +18,8 @@ jobs:
         uses: astral-sh/setup-uv@v7
       - name: Set up Python
         uses: actions/setup-python@v6
+        with:
+          python-version-file: ".python-version"
       - name: Build package
         run: uv build
       - name: Publish package distributions to PyPI
