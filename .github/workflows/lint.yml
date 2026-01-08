@@ -8,18 +8,17 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest # TODO: Use ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12", "3.13" ]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@v7
-        with:
-          python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        run: uv python install
       - name: Install dependencies
         run: uv sync
-      - name: Test with pytest
-        run: uv run pytest
+      - name: Check code
+        run: uv run ruff check
+      - name: Check format
+        run: uv run ruff format --check
 

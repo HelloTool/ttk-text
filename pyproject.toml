@@ -2,12 +2,8 @@
 name = "ttk-text"
 version = "0.2.2"
 description = "Themed Tkinter Text widget with modern styling support."
-authors = [
-    { name = "Jesse205", email = "jesse205@qq.com" },
-]
-maintainers = [
-    { name = "Jesse205", email = "jesse205@qq.com" },
-]
+authors = [{ name = "Jesse205", email = "jesse205@qq.com" }]
+maintainers = [{ name = "Jesse205", email = "jesse205@qq.com" }]
 dependencies = []
 requires-python = ">=3.8"
 readme = "README_pypi.md"
@@ -30,14 +26,7 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 7",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-keywords = [
-    "ttk",
-    "ttk-text",
-    "tkinter",
-    "tkinter-text",
-    "tk",
-    "tk-text",
-]
+keywords = ["ttk", "ttk-text", "tkinter", "tkinter-text", "tk", "tk-text"]
 
 [project.urls]
 Repository = "https://github.com/HelloTool/ttk-text"
@@ -45,19 +34,22 @@ Tracker = "https://github.com/HelloTool/ttk-text/issues"
 Changelog = "https://github.com/HelloTool/ttk-text/releases"
 
 [dependency-groups]
-test = [
-    "pytest>=8.3.4",
+dev = [
+    { include-group = "lint" },
+    { include-group = "test" },
+    { include-group = "example" },
 ]
-example = [
-    "sv-ttk>=2.6.0",
+test = ["pytest>=8.3.4"]
+example = ["sv-ttk>=2.6.0"]
+lint = [
+    "pyright>=1.1.407",
+    "ruff>=0.14.10",
 ]
 
-[tool.pdm]
-distribution = true
-
-[tool.pdm.scripts]
-test = "pytest tests/ -v"
+[tool.ruff]
+line-length = 120
+extend-exclude = ["external-themes/**"]
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["uv_build>=0.9.22,<0.10.0"]
+build-backend = "uv_build"
