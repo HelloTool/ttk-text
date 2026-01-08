@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test:
     runs-on: windows-latest # TODO: Use ubuntu-latest
     strategy:
       matrix:
@@ -18,6 +18,8 @@ jobs:
         uses: astral-sh/setup-uv@v7
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v6
       - name: Install dependencies
         run: uv sync
       - name: Test with pytest

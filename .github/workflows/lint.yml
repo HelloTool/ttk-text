@@ -1,4 +1,4 @@
-name: Testing
+name: Linting
 
 on:
   push:
@@ -7,14 +7,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@v7
       - name: Set up Python
-        run: uv python install
+        uses: actions/setup-python@v6
       - name: Install dependencies
         run: uv sync
       - name: Check code
