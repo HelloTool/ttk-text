@@ -158,6 +158,7 @@ class ThemedTextFrame(Frame):
             highlightthickness=0,
         )
         self.bind_widget(original or instance, True)
+        self.force_update_style()
 
     def __on_bound_widget_destroy(self, event: Event):
         if event.widget in self.__bound_widgets:
@@ -190,8 +191,11 @@ class ThemedTextFrame(Frame):
     def __on_theme_changed(self, event: Event):
         if event.widget != self:
             return
-        self.__update_style()
-        self.__update_stateful_style()
+        # Prevents style updates after widget destruction.
+        # This error occurs during testing but cannot be reproduced manually.
+        if self not in self.master.children:
+            return
+        self.force_update_style()
 
     def __lookup(self, option: str, state: Optional[Iterable[str]] = None, default=None) -> Any:
         style_name = self.cget("style")

@@ -1,5 +1,3 @@
-# tests/test_utils.py
-import pytest
 from ttk_text.utils import parse_padding
 
 
@@ -27,7 +25,6 @@ class TestParsePadding:
         assert result5p is not None
         assert result5p.to_padx() == ("5p", "5p")
         assert result5p.to_pady() == ("5p", "5p")
-        
 
     def test_parse_string_left_top(self):
         result5p10p = parse_padding("5p 10p")
@@ -41,11 +38,9 @@ class TestParsePadding:
         assert result5p10p15p20p.to_padx() == ("5p", "15p")
         assert result5p10p15p20p.to_pady() == ("10p", "20p")
 
-
     def test_parse_none(self):
         result = parse_padding(None)
         assert result is None
-
 
     # def test_parse_invalid(self):
     #     with pytest.raises(ValueError):
