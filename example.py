@@ -1,11 +1,12 @@
 import inspect
 import os
 import sys
-from tkinter import StringVar, Tk
+import tkinter.scrolledtext
+from tkinter import Misc, StringVar, Text, Tk
 from tkinter.font import nametofont
 from tkinter.ttk import Combobox, Entry, Frame, Label, LabelFrame, Sizegrip, Style
 
-from ttk_text import ThemedText
+from ttk_text import ThemedText, ThemedTextFrame
 from ttk_text.scrolled_text import ScrolledText
 
 try:
@@ -60,9 +61,19 @@ def fix_sv_ttk(style: Style):
 
 def fix_forest_ttk(style: Style):
     if style.theme_use() == "forest-light":
-        style.configure("ThemedText.TEntry", fieldbackground="#ffffff", textpadding=5, font="TkTextFont")
+        style.configure(
+            "ThemedText.TEntry",
+            fieldbackground="#ffffff",
+            textpadding=5,
+            font="TkTextFont",
+        )
     else:
-        style.configure("ThemedText.TEntry", fieldbackground="#313131", textpadding=5, font="TkTextFont")
+        style.configure(
+            "ThemedText.TEntry",
+            fieldbackground="#313131",
+            textpadding=5,
+            font="TkTextFont",
+        )
 
 
 def fix_azure_ttk(style: Style):
@@ -72,11 +83,75 @@ def fix_azure_ttk(style: Style):
         style.configure("ThemedText.TEntry", fieldbackground="#333333", textpadding=5)
 
 
+def create_themed_text_labelframe(parent: Misc):
+    frame = LabelFrame(parent, text="ThemedText")
+    text = ThemedText(frame)
+    text.pack(fill="both", expand=True, padx="4p", pady="4p")
+    if doc := inspect.getdoc(ThemedText):
+        text.insert("1.0", doc)
+    frame.propagate(False)
+    return frame
+
+
+def create_scrolled_text_labelframe(parent: Misc):
+    frame = LabelFrame(parent, text="ScrolledText")
+    text = ScrolledText(frame)
+    text.pack(fill="both", expand=True, padx="4p", pady="4p")
+    if doc := inspect.getdoc(ScrolledText):
+        text.insert("1.0", doc)
+    frame.propagate(False)
+    return frame
+
+
+def create_horizontal_scrollable_scrolled_text_labelframe(parent: Misc):
+    frame = LabelFrame(parent, text="ScrolledText(horizontal=True)", width=0, height=0)
+    text = ScrolledText(frame, horizontal=True, wrap="none")
+    text.pack(fill="both", expand=True, padx="4p", pady="4p")
+    if doc := inspect.getdoc(ScrolledText):
+        text.insert("1.0", doc)
+    frame.propagate(False)
+    return frame
+
+
+def create_themed_text_frame_labelframe(parent: Misc):
+    frame = LabelFrame(parent, text="ThemedTextFrame + tkinter.Text")
+    text_frame = ThemedTextFrame(frame)
+    text_frame.pack(fill="both", expand=True, padx="4p", pady="4p")
+    text_frame.grid_rowconfigure(1, weight=1)
+    text_frame.grid_columnconfigure(1, weight=1)
+    text = Text(text_frame)
+    text.grid(row=1, column=1, sticky="nsew")
+    text_frame.bind_text(text)
+    if doc := inspect.getdoc(ThemedTextFrame):
+        text.insert("1.0", doc)
+    frame.propagate(False)
+    return frame
+
+
+def create_themed_text_frame_tkinter_scrolledtext_labelframe(parent: Misc):
+    frame = LabelFrame(parent, text="ThemedTextFrame + tkinter.scrolledtext.ScrolledText")
+    text_frame = ThemedTextFrame(frame)
+    text_frame.pack(fill="both", expand=True, padx="4p", pady="4p")
+    text_frame.grid_rowconfigure(1, weight=1)
+    text_frame.grid_columnconfigure(1, weight=1)
+    text = tkinter.scrolledtext.ScrolledText(text_frame)
+    text.grid(row=1, column=1, sticky="nsew")
+    text_frame.bind_text(text)
+    if doc := inspect.getdoc(ThemedTextFrame):
+        text.insert("1.0", doc)
+    frame.propagate(False)
+    return frame
+
+
 def main():
     enable_dpi_aware()
+
     root = Tk()
     root.title("ThemedText")
     root.configure(padx="4p", pady="4p")
+    fraction = root.tk.call("tk", "scaling") * 0.75
+    root.geometry(f"{round(800 * fraction)}x{round(600 * fraction)}")
+    root.update()
 
     background_frame = Frame(root)
     background_frame.place(relheight=1, relwidth=1, bordermode="outside")
@@ -130,8 +205,11 @@ def main():
     sizegrip = Sizegrip(root)
     sizegrip.place(relx=1, rely=1, anchor="se", bordermode="outside")
 
+    root.grid_columnconfigure([0, 1, 2], weight=1)
+    root.grid_rowconfigure([2, 3], weight=1)
+
     options_frame = LabelFrame(root, text="Options")
-    options_frame.pack(fill="x", padx="4p", pady="4p")
+    options_frame.grid(row=0, column=0, columnspan=3, sticky="nsew", padx="4p", pady="4p")
 
     theme_label = Label(options_frame, text="Theme:")
     theme_label.grid(row=0, column=0, padx="4p", pady="4p")
@@ -140,32 +218,48 @@ def main():
     theme_combobox.grid(row=0, column=1, padx="4p", pady="4p")
 
     entry_frame = LabelFrame(root, text="Tkinter Entry")
-    entry_frame.pack(fill="x", padx="4p", pady="4p")
+    entry_frame.grid(row=1, column=0, columnspan=3, sticky="nsew", padx="4p", pady="4p")
 
     entry = Entry(entry_frame, width=40)
     entry.insert(1, "Hello, Entry!")
     entry.pack(fill="x", padx="4p", pady="4p")
+    create_themed_text_labelframe(root).grid(
+        row=2,
+        column=0,
+        sticky="nsew",
+        padx="4p",
+        pady="4p",
+    )
 
-    example1_frame = LabelFrame(root, text="ThemedText")
-    example1_frame.pack(side="left", fill="both", expand=True, padx="4p", pady="4p")
+    create_scrolled_text_labelframe(root).grid(
+        row=2,
+        column=1,
+        sticky="nsew",
+        padx="4p",
+        pady="4p",
+    )
+    create_horizontal_scrollable_scrolled_text_labelframe(root).grid(
+        row=2,
+        column=2,
+        sticky="nsew",
+        padx="4p",
+        pady="4p",
+    )
+    create_themed_text_frame_labelframe(root).grid(
+        row=3,
+        column=0,
+        sticky="nsew",
+        padx="4p",
+        pady="4p",
+    )
 
-    example1_text = ThemedText(example1_frame, width=30, height=20)
-    example1_text.pack(fill="both", expand=True, padx="4p", pady="4p")
-    example1_text.insert("1.0", inspect.getsource(ThemedText))
-
-    example2_frame = LabelFrame(root, text="ScrolledText")
-    example2_frame.pack(side="left", fill="both", expand=True, padx="4p", pady="4p")
-
-    example2_text = ScrolledText(example2_frame, width=30, height=20)
-    example2_text.pack(fill="both", expand=True, padx="4p", pady="4p")
-    example2_text.insert("1.0", inspect.getsource(ScrolledText))
-
-    example3_frame = LabelFrame(root, text="ScrolledText with horizontal scrollbar")
-    example3_frame.pack(side="left", fill="both", expand=True, padx="4p", pady="4p")
-
-    example3_text = ScrolledText(example3_frame, width=30, height=20, vertical=True, horizontal=True, wrap="none")
-    example3_text.pack(side="left", fill="both", expand=True, padx="4p", pady="4p")
-    example3_text.insert("1.0", inspect.getsource(ScrolledText))
+    create_themed_text_frame_tkinter_scrolledtext_labelframe(root).grid(
+        row=3,
+        column=1,
+        sticky="nsew",
+        padx="4p",
+        pady="4p",
+    )
 
     root.mainloop()
 

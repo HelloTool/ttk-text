@@ -17,7 +17,7 @@ class Padding(NamedTuple):
 def parse_padding(padding) -> Optional[Padding]:
     if padding is None:
         return None
-    elif isinstance(padding, int):
+    elif isinstance(padding, int) or isinstance(padding, float):
         return Padding(padding, padding, padding, padding)
     elif isinstance(padding, str):
         padding = tuple(padding.split())

@@ -4,7 +4,7 @@ from typing import Optional
 
 from ttk_text import ThemedText
 
-__all__ = ['ScrolledText']
+__all__ = ["ScrolledText"]
 
 
 class ScrolledText(ThemedText):
@@ -43,12 +43,14 @@ class ScrolledText(ThemedText):
         self.vbar.grid(row=1, column=2, sticky="ns")
         self.configure(yscrollcommand=self.vbar.set)
         self.vbar.configure(command=self.yview)
+        self.frame.bind_widget(self.vbar)
 
     def _create_horizontal_scrollbar(self):
         self.hbar = Scrollbar(self.frame, orient="horizontal")
         self.hbar.grid(row=2, column=1, sticky="we")
         self.configure(xscrollcommand=self.hbar.set)
         self.hbar.configure(command=self.xview)
+        self.frame.bind_widget(self.hbar)
 
     def _create_corner(self):
         self.corner = Frame(self.frame)

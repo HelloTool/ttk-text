@@ -1,13 +1,233 @@
-from tkinter import Event, EventType, Grid, Pack, Place, Text
+from tkinter import Event, EventType, Grid, Misc, Pack, Place, Text
 from tkinter.ttk import Frame, Style
-from typing import Any, Dict
+from typing import Any, Dict, Iterable, NamedTuple, Optional
 
 from ttk_text.utils import parse_padding
 
-__all__ = ["ThemedText"]
+__all__ = ["ThemedText", "ThemedTextFrame"]
 
-_DYNAMIC_OPTIONS_TEXT = {"background", "foreground", "selectbackground", "selectforeground", "insertwidth", "font",
-                         "padding", "borderwidth"}
+
+_CHANGE_STATE_EVENTS = (
+    "<FocusIn>",
+    "<FocusOut>",
+    "<Enter>",
+    "<Leave>",
+    "<ButtonPress-1>",
+    "<ButtonRelease-1>",
+)
+
+
+class BoundText(NamedTuple):
+    """
+    A bound text widget tuple for managing text widgets and their original instances.
+
+    :ivar instance: Text widget instance, which may be the super of the widget or the widget itself
+    :ivar original: Original widget instance, used to determine which widget's event when receiving events
+    """
+
+    instance: Text
+    original: Text
+
+
+class BoundWidget(NamedTuple):
+    """
+    A bound widget tuple for managing widgets and their state penetration.
+
+    :ivar instance: Widget instance
+    :ivar penetration_state: Whether to allow state penetration to ThemedTextFrame
+                        True: Widget events modify the frame state (e.g., decorative components)
+                        False: Only bind events, do not modify frame state (e.g., scrollbars)
+    """
+
+    instance: Misc
+    penetration_state: bool
+
+
+class ThemedTextFrame(Frame):
+    """
+    A themed text frame providing ttk-style text container.
+
+    This class is a ttk Frame responsible for managing bound text widgets and state transitions,
+    automatically updating styles through bound event listeners.
+
+    Features:
+        - Supports themed text widget styling
+        - Automatically handles focus, hover, and pressed states
+        - Supports binding multiple widgets for complex interaction states
+
+    State Management:
+        - focus: Activated when the widget gains focus
+        - hover: Activated when mouse hovers
+        - pressed: Activated when mouse is pressed
+
+    Important Note:
+        The frame automatically updates its own state. For example, when the mouse hovers over other widgets
+        inside the frame, the frame will automatically remove its own hover state. Since there is no direct
+        way to detect this behavior, all internal components need to be event-bound to ensure styles are
+        correctly updated to the text widget. This is the purpose of `penetration_state=False`: even if
+        widget events don't modify the frame state, they need to be bound to trigger style updates.
+
+    Example:
+        .. code-block:: python
+
+            # Create a themed text frame
+            frame = ThemedTextFrame(root)
+            frame.pack(fill="both", expand=True)
+
+            # Configure grid weights to make the text area expandable
+            frame.grid_rowconfigure(0, weight=1)
+            frame.grid_columnconfigure(0, weight=1)
+
+            # Create a text widget and bind it to the frame
+            text = Text(frame)
+            frame.bind_text(text)
+            text.grid(row=0, column=0, sticky="nsew")
+
+            # Add a scrollbar and bind it (non-penetrating state)
+            scrollbar = Scrollbar(frame)
+            scrollbar.grid(row=0, column=1, sticky="ns")
+            frame.bind_widget(scrollbar, penetration_state=False)
+
+    Style Options:
+        - style: ttk style name (default="ThemedText.TEntry")
+        - class_: Widget class name (default="ThemedText")
+    """
+
+    def __init__(self, master: Optional[Misc] = None, **kwargs):
+        """
+        Initialize a ThemedTextFrame instance.
+
+        :param master: Parent widget, default is None
+        :param kwargs: Configuration options passed to Frame
+
+        .. note::
+            If style is not specified, "ThemedText.TEntry" will be used.
+            If class_ is not specified, "ThemedText" will be used.
+        """
+        if not kwargs.get("style"):
+            kwargs["style"] = "ThemedText.TEntry"
+        if not kwargs.get("class_"):
+            kwargs["class_"] = "ThemedText"
+        super().__init__(master, **kwargs)
+        self.__style = Style(self)
+        self.__bound_text: Optional[BoundText] = None
+        self.__bound_widgets: Dict[Misc, BoundWidget] = {}
+        self.__update_stateful_style_task_id: Optional[str] = None
+
+        self.bind_widget(self, penetration_state=True)
+        self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
+
+    def bind_widget(self, instance: Misc, penetration_state: bool = False):
+        """
+        Bind a widget to the frame so its events can trigger style updates.
+
+        :param instance: Widget instance to bind
+        :param penetration_state: Whether widget events modify the frame state
+
+        .. note::
+            - For functional components like scrollbars, set penetration_state=False
+              so widget events do not modify the frame state but still trigger style updates
+            - For decorative components, set penetration_state=True
+              so widget events modify the frame state and trigger style updates
+
+            Default is False, suitable for most functional components.
+            Since the frame automatically updates its own state, all internal components
+            need to be event-bound to ensure styles are correctly updated to the text widget.
+            This is the main purpose of penetration_state=False.
+        """
+        self.__bound_widgets[instance] = BoundWidget(instance, penetration_state)
+        for sequence in _CHANGE_STATE_EVENTS:
+            instance.bind(sequence, self.__on_change_state, "+")
+        instance.bind("<Destroy>", self.__on_bound_widget_destroy, "+")
+
+    def bind_text(self, instance: Text, original: Optional[Text] = None):
+        """
+        Bind a text widget to the frame.
+
+        :param instance: Text widget instance
+        :param original: Original text widget instance (if instance is super)
+
+        .. note::
+            This method configures the text widget with a flat style (no border or highlight),
+            and binds it to the frame to receive state change events.
+        """
+        self.__bound_text = BoundText(instance, original or instance)
+        instance.configure(
+            relief="flat",
+            borderwidth=0,
+            highlightthickness=0,
+        )
+        self.bind_widget(original or instance, True)
+
+    def __on_bound_widget_destroy(self, event: Event):
+        if event.widget in self.__bound_widgets:
+            del self.__bound_widgets[event.widget]
+
+    def __on_change_state(self, event: Event):
+        # Older versions of Python do not support the `match` statement.
+        if event.widget not in self.__bound_widgets:
+            return
+        bound_widget = self.__bound_widgets[event.widget]
+        if bound_widget.penetration_state:  # 我们不希望某些组件（如滚动条）传递状态
+            if event.type == EventType.FocusIn:
+                self.state(["focus"])
+            elif event.type == EventType.FocusOut:
+                self.state(["!focus"])
+            elif event.type == EventType.Enter:
+                self.state(["hover"])
+            elif event.type == EventType.Leave:
+                # If the pointer hovers over the root widget, tk will automatically restore the hover state later
+                self.state(["!hover"])
+            elif event.type == EventType.ButtonPress and event.num == 1:
+                self.state(["pressed"])
+            elif event.type == EventType.ButtonRelease and event.num == 1:
+                self.state(["!pressed"])
+        if self.__update_stateful_style_task_id is not None:
+            self.after_cancel(self.__update_stateful_style_task_id)
+        # noinspection PyTypeChecker
+        self.__update_stateful_style_task_id = self.after_idle(self.__update_stateful_style)
+
+    def __on_theme_changed(self, event: Event):
+        if event.widget != self:
+            return
+        self.__update_style()
+        self.__update_stateful_style()
+
+    def __lookup(self, option: str, state: Optional[Iterable[str]] = None, default=None) -> Any:
+        style_name = self.cget("style")
+        result = self.__style.lookup(style_name, option, state, default)
+        if not result:
+            return default
+        return result
+
+    def __update_style(self):
+        if self.__bound_text:
+            self.__bound_text.instance.configure(
+                selectbackground=self.__lookup("selectbackground", state=["focus"]),
+                selectforeground=self.__lookup("selectforeground", state=["focus"]),
+                insertwidth=self.__lookup("insertwidth", state=["focus"], default=1),
+                font=self.__lookup("font", default="TkDefaultFont"),
+            )
+            if text_padding := parse_padding(self.__lookup("textpadding")):
+                self.__bound_text.instance.grid(padx=text_padding.to_padx(), pady=text_padding.to_pady())
+            else:
+                self.__bound_text.instance.grid(padx=0, pady=0)
+        self.configure(
+            padding=self.__lookup("padding", default="1"),
+            borderwidth=self.__lookup("borderwidth", default="1"),
+        )
+
+    def __update_stateful_style(self):
+        if self.__bound_text:
+            state = self.state()
+            self.__bound_text.instance.configure(
+                background=self.__lookup("fieldbackground", state),
+                foreground=self.__lookup("foreground", state),
+            )
+
+    def force_update_style(self):
+        self.__update_style()
+        self.__update_stateful_style()
 
 
 class ThemedText(Text):
@@ -15,7 +235,7 @@ class ThemedText(Text):
     A themed text widget combining Tkinter Text with ttk Frame styling.
 
     This widget provides native Tkinter Text functionality with ttk theme support.
-    Inherits from `tkinter.Text` while embedding a ttk.Frame for style management.
+    Inherits from `tkinter.Text` while embedding a ThemedTextFrame for style management.
 
     Style Elements:
         - Style name: 'ThemedText.TEntry' (configurable via style parameter)
@@ -39,125 +259,34 @@ class ThemedText(Text):
         ThemedText → tkinter.Text → tkinter.Widget → tkinter.BaseWidget → object
     """
 
-    def __init__(self, master=None, *, relief=None, style="ThemedText.TEntry", class_="ThemedText", **kwargs):
-        """Initialize a themed text widget.
+    def __init__(self, master: Optional[Misc] = None, **kwargs):
+        """
+        Initialize a themed text widget.
 
         :param master: Parent widget (default=None)
-        :param relief: Frame relief style (None for theme default)
         :param style: ttk style name (default='ThemedText.TEntry')
         :param class_: Widget class name (default='ThemedText')
         :param kw: Additional Text widget configuration options
+
+        .. note::
+            Extract frame-related configuration from kwargs (class, style, relief, padding, borderwidth),
+            remaining configuration is passed to the Text widget.
         """
         frame_kwargs = {
+            "class": kwargs.pop("class", None),
+            "style": kwargs.pop("style", None),
+            "relief": kwargs.pop("relief", None),
             "padding": kwargs.pop("padding", None),
             "borderwidth": kwargs.pop("borderwidth", None),
         }
-        self.frame = Frame(
-            master,
-            relief=relief,
-            style=style,
-            class_=class_,
-            **frame_kwargs,
-        )
-        Text.__init__(
-            self,
-            self.frame,
-            relief="flat",
-            borderwidth=0,
-            highlightthickness=0,
-            **kwargs
-        )
+
+        self.frame = ThemedTextFrame(master, **frame_kwargs)
+        super().__init__(self.frame, **kwargs)
         self.frame.grid_columnconfigure(1, weight=1)
         self.frame.grid_rowconfigure(1, weight=1)
         self.grid(row=1, column=1, sticky="nsew")
-        for sequence in ("<FocusIn>", "<FocusOut>", "<Enter>", "<Leave>", "<ButtonPress-1>", "<ButtonRelease-1>"):
-            self.bind(sequence, self.__on_change_state, "+")
-            self.bind(sequence, self.__on_update_stateful_style, "+")
-            self.frame.bind(sequence, self.__on_update_stateful_style, "+")
-        self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
-        self.bind("<<ThemeChanged>>", self.__on_update_stateful_style, "+")
-        self.__specified_options = set()
-        self._update_specified_options(frame_kwargs)
-        self._update_specified_options(kwargs)
-        self.__style = Style(self)
-        self._update_style()
+        self.frame.bind_text(super(), self)
         self.__copy_geometry_methods()
-
-    def configure(self, cnf: Dict[str, Any] = None, **kwargs):
-        frame_cnf = {
-            "padding": cnf.pop("padding", None),
-            "borderwidth": cnf.pop("borderwidth", None),
-        } if cnf is not None else None
-        frame_kwargs = {
-            "padding": kwargs.pop("padding", None),
-            "borderwidth": kwargs.pop("borderwidth", None),
-        }
-        self.frame.configure(frame_cnf, **frame_kwargs)
-        super().configure(cnf, **kwargs)
-        if cnf is not None:
-            self._update_specified_options(frame_cnf)
-            self._update_specified_options(cnf)
-        self._update_specified_options(frame_kwargs)
-        self._update_specified_options(kwargs)
-
-    config = configure
-
-    def _update_specified_options(self, options: Dict[str, Any]):
-        non_null_keys = {k for k, v in options.items() if v is not None}
-        specified_options = _DYNAMIC_OPTIONS_TEXT & non_null_keys
-        self.__specified_options = self.__specified_options | specified_options
-
-    def _update_style(self):
-        super().configure(
-            selectbackground=self.__lookup_without_specified("selectbackground", None, ["focus"]),
-            selectforeground=self.__lookup_without_specified("selectforeground", None, ["focus"]),
-            insertwidth=self.__lookup_without_specified("insertwidth", None, ["focus"], 1),
-            font=self.__lookup_without_specified("font", None, None, "TkDefaultFont"),
-        )
-        self.frame.configure(
-            padding=self.__lookup_without_specified("padding", None, None, 1),
-            borderwidth=self.__lookup_without_specified("borderwidth", None, None, 1),
-        )
-        text_padding = parse_padding(self.__lookup_without_specified(None, "textpadding", None, 0))
-        super().grid_configure(padx=text_padding.to_padx(), pady=text_padding.to_pady())
-
-    def _update_stateful_style(self, state):
-        super().configure(
-            background=self.__lookup_without_specified("background", "fieldbackground", state),
-            foreground=self.__lookup_without_specified("foreground", None, state),
-        )
-
-    def __on_change_state(self, event: Event):
-        # Older versions of Python do not support the `match` statement.
-        if event.type == EventType.FocusIn:
-            self.frame.state(["focus"])
-        elif event.type == EventType.FocusOut:
-            self.frame.state(["!focus"])
-        elif event.type == EventType.Enter:
-            self.frame.state(["hover"])
-        elif event.type == EventType.Leave:
-            self.frame.state(["!hover"])
-        elif event.type == EventType.ButtonPress:
-            if event.num == 1:
-                self.frame.state(["pressed"])
-        elif event.type == EventType.ButtonRelease:
-            if event.num == 1:
-                self.frame.state(["!pressed"])
-
-    def __on_update_stateful_style(self, _: Event):
-        self._update_stateful_style(self.frame.state())
-
-    def __on_theme_changed(self, _: Event):
-        self._update_style()
-
-    def __lookup_without_specified(self, option: str = None, style_option: str = None, state=None, default=None):
-        if option is None or option not in self.__specified_options:
-            style_option = style_option if style_option is not None else option
-            result = self.__style.lookup(self.frame.cget("style"), style_option, state, default)
-            if result == "":
-                return default
-            return result
-        return None
 
     def __copy_geometry_methods(self):
         """
@@ -165,10 +294,15 @@ class ThemedText(Text):
         """
 
         for m in (vars(Pack).keys() | vars(Grid).keys() | vars(Place).keys()).difference(vars(Text).keys()):
-            if m[0] != '_' and m != 'config' and m != 'configure':
+            if m[0] != "_" and m != "config" and m != "configure":
                 setattr(self, m, getattr(self.frame, m))
 
     def __str__(self):
+        """
+        Return the string representation of the frame.
+
+        :return: String representation of the frame
+        """
         return str(self.frame)
 
 
