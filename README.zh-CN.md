@@ -4,7 +4,7 @@
 [English](./README.md) |
 <small>期待您的翻译！</small>
 
-[![贡献者公约](https://img.shields.io/badge/贡献者公约-2.1-4baaaa.svg)](./CODE_OF_CONDUCT_zh.md)
+[![贡献者公约](https://img.shields.io/badge/贡献者公约-2.1-4baaaa.svg)](./CODE_OF_CONDUCT.zh-CN.md)
 [![MIT License](https://img.shields.io/github/license/Jesse205/ttk-text?label=%E8%AE%B8%E5%8F%AF%E8%AF%81)](./LICENSE)
 [![Testing](https://github.com/Jesse205/ttk-text/actions/workflows/testing.yml/badge.svg)](https://github.com/Jesse205/ttk-text/actions/workflows/testing.yml)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/ttk-text?label=%E4%B8%8B%E8%BD%BD%E9%87%8F)

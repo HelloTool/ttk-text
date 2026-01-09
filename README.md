@@ -1,6 +1,6 @@
 # Themed Tkinter Text
 
-[简体中文](./README_zh.md) |
+[简体中文](./README.zh-CN.md) |
 **English** |
 <small>More translations are welcome!</small>
 
