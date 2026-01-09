@@ -164,6 +164,9 @@ class ThemedTextFrame(Frame):
         if event.widget in self.__bound_widgets:
             del self.__bound_widgets[event.widget]
 
+        if self.__bound_text and event.widget is self.__bound_text.original:
+            self.__bound_text = None
+
     def __on_change_state(self, event: Event):
         # Older versions of Python do not support the `match` statement.
         if event.widget not in self.__bound_widgets:
