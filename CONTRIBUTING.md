@@ -18,7 +18,7 @@ WIP
 
 ## Development
 
-This project is managed using PDM. For more information about PDM, please refer to the [PDM documentation][PDMDocs].
+This project is managed using uv. For more information about uv, please refer to the [uv documentation][uv-docs].
 
 ### Setting Up the Environment
 
@@ -32,7 +32,7 @@ Before writing code, you need to set up the development environment.
 ### Running the Example
 
 ```bash
-pdm run example.py
+uv run example.py
 ```
 
 ## Standards
@@ -47,7 +47,7 @@ pdm run example.py
 
 ### Git Commit Standards
 
-Follow [Conventional Commits][ConventionalCommits].
+Follow [Conventional Commits][conventional-commits].
 
-[ConventionalCommits]: https://www.conventionalcommits.org/
-[PDMDocs]: https://pdm-project.org/zh-cn/latest/
+[conventional-commits]: https://www.conventionalcommits.org/
+[uv-docs]: https://docs.astral.sh/uv/
