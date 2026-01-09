@@ -1,30 +1,32 @@
-from typing import Any, NamedTuple, Optional, Tuple
+from typing import NamedTuple, Optional, Tuple, Union
+
+ScreenDistance = Union[float, str]
 
 
 class Padding(NamedTuple):
-    left: Any
-    top: Any
-    right: Any
-    bottom: Any
+    left: ScreenDistance
+    top: ScreenDistance
+    right: ScreenDistance
+    bottom: ScreenDistance
 
-    def to_padx(self) -> Tuple[Any, Any]:
+    def to_padx(self) -> Tuple[ScreenDistance, ScreenDistance]:
         return self.left, self.right
 
-    def to_pady(self) -> Tuple[Any, Any]:
+    def to_pady(self) -> Tuple[ScreenDistance, ScreenDistance]:
         return self.top, self.bottom
 
 
-def parse_padding(padding) -> Optional[Padding]:
+def parse_padding(padding: Union[ScreenDistance, Tuple[ScreenDistance, ...], None]) -> Optional[Padding]:
     if padding is None:
         return None
     elif isinstance(padding, int) or isinstance(padding, float):
         return Padding(padding, padding, padding, padding)
     elif isinstance(padding, str):
         padding = tuple(padding.split())
-    elif not isinstance(padding, tuple):
-        raise TypeError(f"Invalid padding type: {type(padding)}")
-    left, top, right, bottom, *_ = padding + (None, None, None)
-    top = top if top is not None else left
-    right = right if right is not None else left
-    bottom = bottom if bottom is not None else top
+    if not padding:
+        raise ValueError("Padding must have at least one value")
+    left = padding[0]
+    top = padding[1] if len(padding) >= 2 else left
+    right = padding[2] if len(padding) >= 3 else left
+    bottom = padding[3] if len(padding) >= 4 else top
     return Padding(left, top, right, bottom)

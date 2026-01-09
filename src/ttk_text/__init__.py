@@ -135,6 +135,8 @@ class ThemedTextFrame(Frame):
             need to be event-bound to ensure styles are correctly updated to the text widget.
             This is the main purpose of penetration_state=False.
         """
+        if not instance.winfo_exists():
+            raise ValueError("Widget does not exist")
         self.__bound_widgets[instance] = BoundWidget(instance, penetration_state)
         for sequence in _CHANGE_STATE_EVENTS:
             instance.bind(sequence, self.__on_change_state, "+")
@@ -151,6 +153,8 @@ class ThemedTextFrame(Frame):
             This method configures the text widget with a flat style (no border or highlight),
             and binds it to the frame to receive state change events.
         """
+        if not instance.winfo_exists():
+            raise ValueError("Text widget does not exist")
         self.__bound_text = BoundText(instance, original or instance)
         instance.configure(
             relief="flat",
@@ -158,7 +162,7 @@ class ThemedTextFrame(Frame):
             highlightthickness=0,
         )
         self.bind_widget(original or instance, True)
-        self.force_update_style()
+        self.update_style()
 
     def __on_bound_widget_destroy(self, event: Event):
         if event.widget in self.__bound_widgets:
@@ -172,7 +176,7 @@ class ThemedTextFrame(Frame):
         if event.widget not in self.__bound_widgets:
             return
         bound_widget = self.__bound_widgets[event.widget]
-        if bound_widget.penetration_state:  # 我们不希望某些组件（如滚动条）传递状态
+        if bound_widget.penetration_state:
             if event.type == EventType.FocusIn:
                 self.state(["focus"])
             elif event.type == EventType.FocusOut:
@@ -195,46 +199,43 @@ class ThemedTextFrame(Frame):
         if event.widget != self:
             return
         # Prevents style updates after widget destruction.
-        # This error occurs during testing but cannot be reproduced manually.
-        if self not in self.master.children:
-            return
-        self.force_update_style()
+        self.update_style()
 
     def __lookup(self, option: str, state: Optional[Iterable[str]] = None, default=None) -> Any:
-        style_name = self.cget("style")
-        result = self.__style.lookup(style_name, option, state, default)
-        if not result:
+        result = self.__style.lookup(self.cget("style"), option, state)
+        if not result:  # Avoid ""
             return default
         return result
 
-    def __update_style(self):
+    def update_style(self):
         if self.__bound_text:
-            self.__bound_text.instance.configure(
+            instance = self.__bound_text.instance
+            instance.configure(
                 selectbackground=self.__lookup("selectbackground", state=["focus"]),
                 selectforeground=self.__lookup("selectforeground", state=["focus"]),
                 insertwidth=self.__lookup("insertwidth", state=["focus"], default=1),
                 font=self.__lookup("font", default="TkDefaultFont"),
             )
             if text_padding := parse_padding(self.__lookup("textpadding")):
-                self.__bound_text.instance.grid(padx=text_padding.to_padx(), pady=text_padding.to_pady())
+                instance.grid(padx=text_padding.to_padx(), pady=text_padding.to_pady())
             else:
-                self.__bound_text.instance.grid(padx=0, pady=0)
+                instance.grid(padx=0, pady=0)
         self.configure(
             padding=self.__lookup("padding", default="1"),
             borderwidth=self.__lookup("borderwidth", default="1"),
         )
+        self.__update_stateful_style()
 
     def __update_stateful_style(self):
+        if self.__update_stateful_style_task_id is not None:
+            self.after_cancel(self.__update_stateful_style_task_id)
+            self.__update_stateful_style_task_id = None
         if self.__bound_text:
             state = self.state()
             self.__bound_text.instance.configure(
                 background=self.__lookup("fieldbackground", state),
                 foreground=self.__lookup("foreground", state),
             )
-
-    def force_update_style(self):
-        self.__update_style()
-        self.__update_stateful_style()
 
 
 class ThemedText(Text):
