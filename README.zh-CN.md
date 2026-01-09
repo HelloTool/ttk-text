@@ -53,10 +53,13 @@ poetry add ttk-text
 
 ### 使用组件
 
-ttk-text 提供了两个组件：
+ttk-text 提供了三个组件：
 
+- `ttk_text.ThemedTextFrame`: 用于渲染文本框样式的 Frame，此组件将绑定一个 Text。
 - `ttk_text.ThemedText`: 支持主题的 Text 组件，替代 `tkinter.Text`。
 - `ttk_text.scrolled_text.ScrolledText`: `ThemedText` 的扩展，支持垂直/水平滚动条，替代 `tkinter.scrolledtext.ScrolledText`。
+
+#### 使用 `ThemedText` 与 `ScrolledText`
 
 您可以像使用 `tkinter.Text` 一样使用 `ThemedText` 和 `ScrolledText`。
 
@@ -64,33 +67,98 @@ ttk-text 提供了两个组件：
 
 ```python
 from tkinter import Tk
+
 from ttk_text import ThemedText
 from ttk_text.scrolled_text import ScrolledText
 
 root = Tk()
+
 themed_text = ThemedText(root)
-themed_text.pack(fill="both", expand=True)
+themed_text.pack(fill="both", expand=True, padx="7p", pady="7p")
 
 scrolled_text = ScrolledText(root)
-scrolled_text.pack(fill="both", expand=True)
+scrolled_text.pack(fill="both", expand=True, padx="7p", pady=(0, "7p"))
 
 root.mainloop()
 ```
 
+> [!NOTE]
+>
+> 目前，ttk style 的属性会覆盖您设置的 `selectbackground` 等属性。
+
+#### 为 `ThemedText` 与 `ScrolledText` 添加额外组件
+
+`ThemedText` 自身实际上并不负责主题化，而是将自己包装在 `ThemedTextFrame` 中，让 `ThemedTextFrame` 负责主题化，您可以通过 `ThemedText#frame` 获取到该 `ThemedTextFrame`。
+
+`ThemedText` 会将自身使用 grid 布局放置在 `ThemedText#frame` 的 (1, 1) 位置。
+
+`ThemedText#frame` 的布局如下：
+
+| 列\\行 |   0   |      1       |   2   |
+| :----: | :---: | :----------: | :---: |
+|   0    |       |              |       |
+|   1    |       | `ThemedText` |       |
+|   2    |       |              |       |
+
+`ScrolledText` 还会添加滚动条和使角落衔接处美观的 Frame。
+
+`ScrolledText#frame` 的布局如下：
+
+| 列\\行 |   0   |                1                 |               2                |
+| :----: | :---: | :------------------------------: | :----------------------------: |
+|   0    |       |                                  |                                |
+|   1    |       |           `ThemedText`           | `Scrollbar(orient="vertical")` |
+|   2    |       | `Scrollbar(orient="horizontal")` |            `Frame`             |
+
+您可以像 `ScrolledText` 一样在 (1, 1) 周围放置其他组件，并调用 `ThemedText#frame.bind_widget()` 来绑定该组件。
+
+#### 使用 `ThemedTextFrame`
+
+您可以使用 `ThemedTextFrame` 来实现第三方 Text 组件的主体化。
+
+在添加完毕后，您需要调用 `ThemedText#frame.bind_text()` 来绑定第三方 Text 组件。
+
+例如使用 `tkinter.scrolledtext.ScrolledText`：
+
+```python
+import tkinter.scrolledtext
+from tkinter import Tk
+
+from ttk_text import ThemedTextFrame
+
+root = Tk()
+
+text_frame = ThemedTextFrame(root)
+text_frame.pack(fill="both", expand=True, padx="7p", pady="7p")
+text_frame.grid_rowconfigure(1, weight=1)
+text_frame.grid_columnconfigure(1, weight=1)
+
+text = tkinter.scrolledtext.ScrolledText(text_frame)
+text.grid(row=1, column=1, sticky="nsew")
+
+text_frame.bind_text(text)
+
+root.mainloop()
+```
+
+> [!NOTE]
+>
+> `ThemedTextFrame` 内部需要使用 grid 布局，**您不能使用 pack 或 place 布局**。
+
 ### 配置样式
 
-ThemedText 的原理是通过将 Text 组件包装在 ttk Frame 中实现的。此 Frame 默认的样式名为 `ThemedText.TEntry`，因此您可以使用该名称来配置样式。
+您可以使用 `ThemedText.TEntry` 来配置样式。
 
-| 属性             | 说明            |
-| ---------------- | --------------- |
-| borderwidth      | Frame 边框宽度  |
-| padding          | Frame 内边距    |
-| fieldbackground  | Text 背景色     |
-| foreground       | Text 字体色     |
-| textpadding      | Text 外边距     |
-| insertwidth      | Text 光标宽度   |
-| selectbackground | Text 选中背景色 |
-| selectforeground | Text 选中字体色 |
+| 属性               | 说明                       |
+| ------------------ | -------------------------- |
+| `borderwidth`      | `ThemedTextFrame` 边框宽度 |
+| `padding`          | `ThemedTextFrame` 内边距   |
+| `fieldbackground`  | `Text` 背景色              |
+| `foreground`       | `Text` 字体色              |
+| `textpadding`      | `Text` 外边距              |
+| `insertwidth`      | `Text` 光标宽度            |
+| `selectbackground` | `Text` 选中背景色          |
+| `selectforeground` | `Text` 选中字体色          |
 
 例如，将边框设置为 `1.5p`：
 
@@ -101,9 +169,9 @@ style = Style()
 style.configure("ThemedText.TEntry", borderwidth="1.5p")
 ```
 
-### 修复主题
+### 主题兼容性
 
-部分第三方主题可能与 TtkText 不兼容，您可以在设置主题后调用以下函数来修复该问题：
+部分第三方主题可能与 ttk-text 不兼容，您可以在设置主题后调用以下函数来修复该问题：
 
 <details>
 <summary>Sun Valley ttk theme</summary>

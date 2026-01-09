@@ -53,14 +53,17 @@ poetry add ttk-text
 
 ### Using the Widgets
 
-ttk-text provides two widgets:
+ttk-text provides three widgets:
 
+- `ttk_text.ThemedTextFrame`: A Frame for rendering the textbox style, which will bind to a Text widget.
 - `ttk_text.ThemedText`: A themed Text widget, as a replacement for `tkinter.Text`.
 - `ttk_text.scrolled_text.ScrolledText`: An extension of `ThemedText` with vertical/horizontal scrollbars, as a replacement for `tkinter.scrolledtext.ScrolledText`.
 
+#### Using `ThemedText` and `ScrolledText`
+
 You can use `ThemedText` and `ScrolledText` just like you would use `tkinter.Text`.
 
-Here’s an example:
+Here's an example:
 
 ```python
 from tkinter import Tk
@@ -68,29 +71,93 @@ from ttk_text import ThemedText
 from ttk_text.scrolled_text import ScrolledText
 
 root = Tk()
+
 themed_text = ThemedText(root)
-themed_text.pack(fill="both", expand=True)
+themed_text.pack(fill="both", expand=True, padx="7p", pady="7p")
 
 scrolled_text = ScrolledText(root)
-scrolled_text.pack(fill="both", expand=True)
+scrolled_text.pack(fill="both", expand=True, padx="7p", pady=(0, "7p"))
 
 root.mainloop()
 ```
 
+> [!NOTE]
+>
+> Currently, ttk style properties will override attributes you set such as `selectbackground`.
+
+#### Adding Additional Components to `ThemedText` and `ScrolledText`
+
+`ThemedText` itself doesn't handle theming; instead, it wraps itself in a `ThemedTextFrame` and lets the `ThemedTextFrame` handle theming. You can access this `ThemedTextFrame` via `ThemedText#frame`.
+
+`ThemedText` positions itself at grid position (1, 1) within `ThemedText#frame`.
+
+Layout of `ThemedText#frame`:
+
+| Column/Row |   0   |      1       |   2   |
+| :--------: | :---: | :----------: | :---: |
+|     0      |       |              |       |
+|     1      |       | `ThemedText` |       |
+|     2      |       |              |       |
+
+`ScrolledText` also adds scrollbars and a frame for corner junction aesthetics.
+
+Layout of `ScrolledText#frame`:
+
+| Column/Row |   0   |                1                 |               2                |
+| :--------: | :---: | :------------------------------: | :----------------------------: |
+|     0      |       |                                  |                                |
+|     1      |       |           `ThemedText`           | `Scrollbar(orient="vertical")` |
+|     2      |       | `Scrollbar(orient="horizontal")` |            `Frame`             |
+
+You can place other components around (1, 1) like with `ScrolledText`, and call `ThemedText#frame.bind_widget()` to bind the component.
+
+#### Using `ThemedTextFrame`
+
+You can use `ThemedTextFrame` to theme third-party Text components.
+
+After adding the component, you need to call `ThemedText#frame.bind_text()` to bind the third-party Text component.
+
+For example, using `tkinter.scrolledtext.ScrolledText`:
+
+```python
+import tkinter.scrolledtext
+from tkinter import Tk
+
+from ttk_text import ThemedTextFrame
+
+root = Tk()
+
+text_frame = ThemedTextFrame(root)
+text_frame.pack(fill="both", expand=True, padx="7p", pady="7p")
+text_frame.grid_rowconfigure(1, weight=1)
+text_frame.grid_columnconfigure(1, weight=1)
+
+text = tkinter.scrolledtext.ScrolledText(text_frame)
+text.grid(row=1, column=1, sticky="nsew")
+
+text_frame.bind_text(text)
+
+root.mainloop()
+```
+
+> [!NOTE]
+>
+> `ThemedTextFrame` internally requires grid layout, **you cannot use pack or place layouts**.
+
 ### Styling Configuration
 
-The ThemedText component works by wrapping a Text widget inside a ttk Frame. This Frame uses the default style name `ThemedText.TEntry`, which you can use to customize its appearance.
+You can use `ThemedText.TEntry` to configure styling.
 
-| Property         | Description                     |
-| ---------------- | ------------------------------- |
-| borderwidth      | Frame border width              |
-| padding          | Frame internal padding          |
-| fieldbackground  | Text background color           |
-| foreground       | Text font color                 |
-| textpadding      | Text external padding           |
-| insertwidth      | Text cursor width               |
-| selectbackground | Text selection background color |
-| selectforeground | Text selection font color       |
+| Property           | Description                        |
+| ------------------ | ---------------------------------- |
+| `borderwidth`      | `ThemedTextFrame` border width     |
+| `padding`          | `ThemedTextFrame` internal padding |
+| `fieldbackground`  | `Text` background color            |
+| `foreground`       | `Text` font color                  |
+| `textpadding`      | `Text` external padding            |
+| `insertwidth`      | `Text` cursor width                |
+| `selectbackground` | `Text` selection background color  |
+| `selectforeground` | `Text` selection font color        |
 
 For example, to set the border width to `1.5p`:
 
@@ -101,9 +168,9 @@ style = Style()
 style.configure("ThemedText.TEntry", borderwidth="1.5p")
 ```
 
-### Fixing Themes
+### Theme Compatibility
 
-Some third-party themes may not be fully compatible with TtkText. You can call the following function after setting the theme:
+Some third-party themes may not be fully compatible with ttk-text. You can call the following function after setting the theme:
 
 <details>
 <summary>Sun Valley ttk theme</summary>
