@@ -21,12 +21,12 @@ class BoundText(NamedTuple):
     """
     A bound text widget tuple for managing text widgets and their original instances.
 
-    :ivar instance: Text widget instance, which may be the super of the widget or the widget itself
-    :ivar original: Original widget instance, used to determine which widget's event when receiving events
+    :ivar widget: Original widget instance, used to determine which widget's event when receiving events
+    :ivar proxy: Text widget instance, which may be the super of the widget or the widget itself
     """
 
-    instance: Text
-    original: Text
+    widget: Text
+    proxy: Text
 
 
 class BoundWidget(NamedTuple):
@@ -117,11 +117,11 @@ class ThemedTextFrame(Frame):
         self.bind_widget(self, penetration_state=True)
         self.bind("<<ThemeChanged>>", self.__on_theme_changed, "+")
 
-    def bind_widget(self, instance: Misc, penetration_state: bool = False):
+    def bind_widget(self, widget: Misc, *, penetration_state: bool = False):
         """
         Bind a widget to the frame so its events can trigger style updates.
 
-        :param instance: Widget instance to bind
+        :param widget: Widget instance to bind
         :param penetration_state: Whether widget events modify the frame state
 
         .. note::
@@ -135,40 +135,42 @@ class ThemedTextFrame(Frame):
             need to be event-bound to ensure styles are correctly updated to the text widget.
             This is the main purpose of penetration_state=False.
         """
-        if not instance.winfo_exists():
+        if not widget.winfo_exists():
             raise ValueError("Widget does not exist")
-        self.__bound_widgets[instance] = BoundWidget(instance, penetration_state)
+        self.__bound_widgets[widget] = BoundWidget(widget, penetration_state)
         for sequence in _CHANGE_STATE_EVENTS:
-            instance.bind(sequence, self.__on_change_state, "+")
-        instance.bind("<Destroy>", self.__on_bound_widget_destroy, "+")
+            widget.bind(sequence, self.__on_change_state, "+")
+        widget.bind("<Destroy>", self.__on_bound_widget_destroy, "+")
 
-    def bind_text(self, instance: Text, original: Optional[Text] = None):
+    def bind_text(self, text: Text, proxy: Optional[Text] = None):
         """
         Bind a text widget to the frame.
 
-        :param instance: Text widget instance
-        :param original: Original text widget instance (if instance is super)
+        :param text: Text widget instance
+        :param proxy: Optional proxy text (can be a super widget of text)
 
         .. note::
             This method configures the text widget with a flat style (no border or highlight),
             and binds it to the frame to receive state change events.
         """
-        if not instance.winfo_exists():
+        if proxy is None:
+            proxy = text
+        if not proxy.winfo_exists():
             raise ValueError("Text widget does not exist")
-        self.__bound_text = BoundText(instance, original or instance)
-        instance.configure(
+        self.__bound_text = BoundText(text, proxy)
+        proxy.configure(
             relief="flat",
             borderwidth=0,
             highlightthickness=0,
         )
-        self.bind_widget(original or instance, True)
+        self.bind_widget(text, penetration_state=True)
         self.update_style()
 
     def __on_bound_widget_destroy(self, event: Event):
         if event.widget in self.__bound_widgets:
             del self.__bound_widgets[event.widget]
 
-        if self.__bound_text and event.widget is self.__bound_text.original:
+        if self.__bound_text and event.widget is self.__bound_text.widget:
             self.__bound_text = None
 
     def __on_change_state(self, event: Event):
@@ -209,17 +211,17 @@ class ThemedTextFrame(Frame):
 
     def update_style(self):
         if self.__bound_text:
-            instance = self.__bound_text.instance
-            instance.configure(
+            proxy = self.__bound_text.proxy
+            proxy.configure(
                 selectbackground=self.__lookup("selectbackground", state=["focus"]),
                 selectforeground=self.__lookup("selectforeground", state=["focus"]),
                 insertwidth=self.__lookup("insertwidth", state=["focus"], default=1),
                 font=self.__lookup("font", default="TkDefaultFont"),
             )
             if text_padding := parse_padding(self.__lookup("textpadding")):
-                instance.grid(padx=text_padding.to_padx(), pady=text_padding.to_pady())
+                proxy.grid(padx=text_padding.to_padx(), pady=text_padding.to_pady())
             else:
-                instance.grid(padx=0, pady=0)
+                proxy.grid(padx=0, pady=0)
         self.configure(
             padding=self.__lookup("padding", default="1"),
             borderwidth=self.__lookup("borderwidth", default="1"),
@@ -232,7 +234,7 @@ class ThemedTextFrame(Frame):
             self.__update_stateful_style_task_id = None
         if self.__bound_text:
             state = self.state()
-            self.__bound_text.instance.configure(
+            self.__bound_text.proxy.configure(
                 background=self.__lookup("fieldbackground", state),
                 foreground=self.__lookup("foreground", state),
             )
@@ -293,7 +295,7 @@ class ThemedText(Text):
         self.frame.grid_columnconfigure(1, weight=1)
         self.frame.grid_rowconfigure(1, weight=1)
         self.grid(row=1, column=1, sticky="nsew")
-        self.frame.bind_text(super(), self)
+        self.frame.bind_text(self, super())
         self.__copy_geometry_methods()
 
     def __copy_geometry_methods(self):
