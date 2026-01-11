@@ -6,15 +6,9 @@ from ttk_text.utils import parse_padding
 
 __all__ = ["ThemedText", "ThemedTextFrame"]
 
+_UPDATE_STYLE_ONLY_EVENTS = ("<FocusIn>", "<FocusOut>", "<Enter>", "<Leave>")
 
-_CHANGE_STATE_EVENTS = (
-    "<FocusIn>",
-    "<FocusOut>",
-    "<Enter>",
-    "<Leave>",
-    "<ButtonPress-1>",
-    "<ButtonRelease-1>",
-)
+_TRANSITION_STATE_EVENTS = _UPDATE_STYLE_ONLY_EVENTS + ("<ButtonPress-1>", "<ButtonRelease-1>")
 
 
 class BoundText(NamedTuple):
@@ -138,8 +132,14 @@ class ThemedTextFrame(Frame):
         if not widget.winfo_exists():
             raise ValueError("Widget does not exist")
         self.__bound_widgets[widget] = BoundWidget(widget, penetration_state)
-        for sequence in _CHANGE_STATE_EVENTS:
-            widget.bind(sequence, self.__on_change_state, "+")
+
+        if penetration_state:
+            for sequence in _TRANSITION_STATE_EVENTS:
+                widget.bind(sequence, self.__handle_state_transition, "+")
+        else:
+            for sequence in _UPDATE_STYLE_ONLY_EVENTS:
+                widget.bind(sequence, self.__handle_style_update, "+")
+
         widget.bind("<Destroy>", self.__on_bound_widget_destroy, "+")
 
     def bind_text(self, text: Text, proxy: Optional[Text] = None):
@@ -156,7 +156,7 @@ class ThemedTextFrame(Frame):
         if proxy is None:
             proxy = text
         if not proxy.winfo_exists():
-            raise ValueError("Text widget does not exist")
+            raise ValueError(f"Text widget {proxy} does not exist or has been destroyed")
         self.__bound_text = BoundText(text, proxy)
         proxy.configure(
             relief="flat",
@@ -173,11 +173,11 @@ class ThemedTextFrame(Frame):
         if self.__bound_text and event.widget is self.__bound_text.widget:
             self.__bound_text = None
 
-    def __on_change_state(self, event: Event):
+    def __handle_state_transition(self, event: Event):
         # Older versions of Python do not support the `match` statement.
-        if event.widget not in self.__bound_widgets:
+        bound_widget = self.__bound_widgets.get(event.widget)
+        if bound_widget is None:
             return
-        bound_widget = self.__bound_widgets[event.widget]
         if bound_widget.penetration_state:
             if event.type == EventType.FocusIn:
                 self.state(["focus"])
@@ -192,6 +192,9 @@ class ThemedTextFrame(Frame):
                 self.state(["pressed"])
             elif event.type == EventType.ButtonRelease and event.num == 1:
                 self.state(["!pressed"])
+        self.__handle_style_update(event)
+
+    def __handle_style_update(self, _: Event):
         if self.__update_stateful_style_task_id is not None:
             self.after_cancel(self.__update_stateful_style_task_id)
         # noinspection PyTypeChecker
@@ -295,6 +298,9 @@ class ThemedText(Text):
         self.frame.grid_columnconfigure(1, weight=1)
         self.frame.grid_rowconfigure(1, weight=1)
         self.grid(row=1, column=1, sticky="nsew")
+
+        # Use super() as a proxy to ensure direct calls to Text base class methods
+        # Bypass methods that may be overridden in ThemedText (e.g., grid/configure)
         self.frame.bind_text(self, super())
         self.__copy_geometry_methods()
 
