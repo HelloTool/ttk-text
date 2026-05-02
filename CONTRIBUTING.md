@@ -1,36 +1,67 @@
 # Contributing
 
-Before contributing, please adhere to the [Code of Conduct](CODE_OF_CONDUCT.md), platform policies, and relevant laws and regulations.
+First of all, thank you for considering contributing to **Themed Tkinter Text**!
 
-## Submit Issues
+We welcome any form of contribution, whether it's reporting issues, suggesting improvements, fixing bugs, or adding new features.
+
+> [!TIP]
+> If you're new to open source contributions, here are some helpful resources:
+>
+> - GitHub Community’s [Introduction to Open Source][how-to-contribute-github-opensource-guide].
+> - Gitee Community’s [Open Source Guide][participating-gitee-opensource-guide].
+
+## Code of Conduct
+
+When participating in this project, please adhere to our [Contributor Covenant Code of Conduct](./CODE_OF_CONDUCT.md). We are committed to providing a friendly and inclusive environment for everyone.
+
+## How to Contribute
+
+### Submitting Issues or Suggestions
 
 If you encounter problems during use or have suggestions for improvement, please feel free to submit feedback through any of the following channels:
 
 - [GitHub Issues][issues-github]
 - [GitCode Issues][issues-gitcode]
 
-## Pull Requests
+### Participating in Development
 
-1. Ensure there are no related PRs.
+1. Ensure there are no related pull requests (PRs) on the repository.
 2. Fork this repository.
-3. Clone the repository locally using [Git](https://git-scm.com/).
-4. Familiarize yourself with the project development methods.
+3. Clone the repository locally using [Git][git-homepage].
+4. Familiarize yourself with the project development approach.
 5. Create a branch, such as `feature/xxx` or `bugfix/xxx`.
-6. Write and commit your code.
-7. Submit a Pull Request to this repository.
+6. Write your code.
+7. Run the following commands to ensure your code meets the standards and introduces no errors:
+   ```bash
+   uv run ruff check
+   uv run ruff format
+   uv run pyright
+   uv run pytest
+   ```
+8. Commit your code.
+9. Submit a PR to this repository.
 
 ## Development
 
-This project is managed using uv. For more information about uv, please refer to the [uv documentation][uv-docs].
+This project is managed using uv. For more information, please refer to the [uv documentation][uv-homepage].
 
 ### Setting Up the Environment
 
-Before writing code, you need to set up the development environment.
+Before writing code, you need to set up the development environment:
 
-1. Install Git and uv.
-2. Clone the repository locally by running `git clone https://github.com/hellotool/ttk-text`.
-3. Initialize submodules by running `git submodule update --init --recursive`.
-4. Install dependencies by running `uv sync`.
+1. Install [Git][git-homepage] and [uv][uv-homepage].
+2. Clone the repository:
+   ```bash
+   git clone https://github.com/hellotool/ttk-text
+   ```
+3. Initialize submodules:
+   ```bash
+   git submodule update --init --recursive
+   ```
+4. Install dependencies:
+   ```bash
+   uv sync
+   ```
 
 ### Running the Example
 
@@ -42,18 +73,33 @@ uv run example.py
 
 ### Code Standards
 
-**Python (`.py`):**
+#### Python Code (`.py`)
 
-- Function parameters must include type annotations.
-- Maximum line length: 120 characters.
-- All other cases should follow [PEP 8](https://peps.python.org/pep-0008/).
+- Function parameters must have type annotations.
+- Maximum line length is 120 characters.
+- Other cases should follow [PEP 8][pep-0008].
+
+#### Markdown Documentation (`.md`)
+
+- No restriction on maximum line length.
+- For details, refer to `.markdownlint.json`.
+- Other cases should follow [Markdownlint][markdownlint-repository-github].
+
+For more details, please refer to `.editorconfig`.
 
 ### Git Commit Standards
 
-Follow [Conventional Commits][conventional-commits].
+Follow [Conventional Commits][conventionalcommits-homepage].
 
 [issues-github]: https://github.com/hellotool/ttk-text/issues
 [issues-gitcode]: https://gitcode.com/hellotool/ttk-text/issues
 
-[conventional-commits]: https://www.conventionalcommits.org/
-[uv-docs]: https://docs.astral.sh/uv/
+[markdownlint-repository-github]: https://github.com/DavidAnson/markdownlint
+[conventionalcommits-homepage]: https://www.conventionalcommits.org/en/v1.0.0/
+[uv-homepage]: https://docs.astral.sh/uv/
+[git-homepage]: https://git-scm.com/
+
+[how-to-contribute-github-opensource-guide]: https://opensource.guide/how-to-contribute/
+[participating-gitee-opensource-guide]: https://gitee.com/opensource-guide/guide/participating/roles.html
+
+[pep-0008]: https://peps.python.org/pep-0008/
