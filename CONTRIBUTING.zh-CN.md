@@ -7,12 +7,12 @@
 > [!TIP]
 > 如果您不了解如何参与开源贡献，可以参考以下资源：
 >
-> - GitHub 社区的[开源软件指南][how-to-contribute-github-opensource-guide]。
-> - Gitee 社区的[开源指北][participating-gitee-opensource-guide]。
+> - GitHub 社区的 [开源软件指南][how-to-contribute-github-opensource-guide]。
+> - Gitee 社区的 [开源指北][participating-gitee-opensource-guide]。
 
 ## 行为准则
 
-参与本项目时，请遵守我们的[贡献者公约](./CODE_OF_CONDUCT.md)。我们致力于为每个人提供友善、包容的社区环境。
+参与本项目时，请遵守我们的 [贡献者公约](./CODE_OF_CONDUCT.md)。我们致力于为每个人提供友善、包容的社区环境。
 
 ## 如何贡献
 
@@ -89,7 +89,7 @@ uv run example.py
 
 ### Git 提交规范
 
-遵循[约定式提交][conventionalcommits-homepage]。
+遵循 [约定式提交][conventionalcommits-homepage]。
 
 [issues-github]: https://github.com/hellotool/ttk-text/issues
 [issues-gitcode]: https://gitcode.com/hellotool/ttk-text/issues
