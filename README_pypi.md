@@ -52,7 +52,7 @@ root.mainloop()
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/hellotool/ttk-text/blob/main/CONTRIBUTING.md) for details.
+See [Contributing](https://github.com/hellotool/ttk-text/blob/main/CONTRIBUTING.md) for details.
 
 ## License
 

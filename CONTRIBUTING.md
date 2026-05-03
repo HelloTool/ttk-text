@@ -1,5 +1,8 @@
 # Contributing
 
+[简体中文](./CONTRIBUTING.zh-CN.md) |
+**English** |
+
 First of all, thank you for considering contributing to **Themed Tkinter Text**!
 
 We welcome any form of contribution, whether it's reporting issues, suggesting improvements, fixing bugs, or adding new features.

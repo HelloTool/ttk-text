@@ -273,7 +273,7 @@ app.mainloop()
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/hellotool/TtkText/blob/main/CONTRIBUTING.md) for details.
+See [Contributing](./CONTRIBUTING.md) for details.
 
 ## License
 

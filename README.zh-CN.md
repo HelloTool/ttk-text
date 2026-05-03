@@ -274,7 +274,7 @@ app.mainloop()
 
 ## 参与贡献
 
-详情请参阅 [CONTRIBUTING.md（英文）](./CONTRIBUTING.md)。
+详情请参阅 [贡献指南](./CONTRIBUTING.zh-CN.md)。
 
 ## 许可证
 
