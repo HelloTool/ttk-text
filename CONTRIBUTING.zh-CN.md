@@ -8,7 +8,7 @@
 我们欢迎任何形式的贡献，无论是报告问题、提出建议、修复错误还是添加新功能。
 
 > [!TIP]
-> 如果您不了解如何参与开源贡献，可以参考以下资源：
+> 如果你是开源贡献的新手，这些资源或许能帮到你：
 >
 > - GitHub 社区的 [开源软件指南][how-to-contribute-github-opensource-guide]。
 > - Gitee 社区的 [开源指北][participating-gitee-opensource-guide]。
