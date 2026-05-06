@@ -273,7 +273,7 @@ app.mainloop()
 
 ## Contributing
 
-See [Contributing](./CONTRIBUTING.md) for details.
+See [Contribution Guidelines](./CONTRIBUTING.md) for details.
 
 ## License
 

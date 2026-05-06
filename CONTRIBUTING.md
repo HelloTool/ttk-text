@@ -1,4 +1,4 @@
-# Contributing
+# Contribution Guidelines
 
 [简体中文](./CONTRIBUTING.zh-CN.md) |
 **English** |
