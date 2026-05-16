@@ -1,6 +1,6 @@
 [project]
 name = "ttk-text"
-version = "0.3.3"
+version = "0.3.4"
 description = "Themed Tkinter Text widget with modern styling support."
 authors = [{ name = "Jesse205", email = "jesse205@qq.com" }]
 maintainers = [{ name = "Jesse205", email = "jesse205@qq.com" }]
@@ -43,7 +43,7 @@ test = [
     "pytest>=9.0.3; python_version >= '3.10'",
 ]
 example = ["sv-ttk>=2.6.0"]
-lint = ["pyright>=1.1.409", "ruff>=0.15.12"]
+lint = ["pyright>=1.1.409", "ruff>=0.15.13"]
 dev = [
     { include-group = "lint" },
     { include-group = "example" },
