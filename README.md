@@ -271,6 +271,12 @@ app.mainloop()
 
 </details>
 
+## Credits
+
+This project is inspired by [Git GUI](https://github.com/j6t/git-gui)'s native-theming technique.
+
+This is an independent Python implementation; no GPL-licensed code is included.
+
 ## Contributing
 
 See [Contribution Guidelines](./CONTRIBUTING.md) for details.

@@ -272,6 +272,12 @@ app.mainloop()
 
 </details>
 
+## 致谢
+
+本项目灵感源自 [Git GUI](https://github.com/j6t/git-gui) 的原生主题技术。
+
+此为独立的 Python 实现，未包含任何 GPL 许可代码。
+
 ## 参与贡献
 
 详情请参阅 [贡献指南](./CONTRIBUTING.zh-CN.md)。
